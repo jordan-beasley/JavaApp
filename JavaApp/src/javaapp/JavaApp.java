@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package javaapp;
 
 import javafx.application.Application;
@@ -11,10 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-/**
- *
- * @author Beasley
- */
+
 public class JavaApp extends Application {
     
     @Override
@@ -23,6 +15,7 @@ public class JavaApp extends Application {
         
         Scene scene = new Scene(root);
         
+        stage.setTitle("OpenEdit");
         stage.setScene(scene);
         stage.show();
     }
