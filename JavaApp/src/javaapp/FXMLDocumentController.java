@@ -24,6 +24,8 @@ public class FXMLDocumentController implements Initializable {
     private Button bigbutton;
     @FXML
     private ImageView imgView;
+    @FXML
+    private Button nextFrame;
     
     @FXML
     private void handleButtonAction(ActionEvent event) {
@@ -36,23 +38,67 @@ public class FXMLDocumentController implements Initializable {
         // TODO
     }
     
+    int frameNumber = 340;
+    boolean isRunning = false;
     
     void testFunction()
     {
-        int frameNumber = 288;
         
         try
         {
-            System.out.println("Grabbing frame");
-            BufferedImage bufferedImage = AWTFrameGrab.getFrame(new File("%FILE PATH%"), frameNumber);
-            Image image = SwingFXUtils.toFXImage(bufferedImage, null);
-            imgView.setImage(image);
-            System.out.println("Pringing frame");
+            //System.out.println("Grabbing frame");
+            //BufferedImage bufferedImage = AWTFrameGrab.getFrame(new File("C:\\Users\\caleb\\Documents\\! Schoolwork\\Java\\project\\JavaApp\\TestResources\\Taylor Swift Goat Parody.mp4"), frameNumber);
+            //Image image = SwingFXUtils.toFXImage(bufferedImage, null);
+            //imgView.setImage(image);
+            //System.out.println("Pringing frame");
+            
+            Thread mt = new Thread(){
+                public void run()
+                {
+                    try{
+                        //System.out.println("Grabbing frame " + frameNumber);
+                        File f = new File("C:\\Users\\caleb\\Documents\\! Schoolwork\\Java\\project\\JavaApp\\TestResources\\Taylor Swift Goat Parody.mp4");
+                        BufferedImage bufferedImage = AWTFrameGrab.getFrame(f, frameNumber);
+                        int currentFrame = 0;
+                        
+                        while(isRunning)
+                        {
+                            if(currentFrame != frameNumber)
+                            {
+                                System.out.println("Grabbing frame " + frameNumber);
+                                Image image = SwingFXUtils.toFXImage(bufferedImage, null);
+                                imgView.setImage(image);
+                                System.out.println("Printing frame");
+                                currentFrame = frameNumber;
+                            }
+                        }
+                    }
+                    catch(Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            
+            if(!isRunning)
+            {
+                isRunning = true;
+                mt.start();
+            }
             
         }
         catch(Exception e)
         {
             e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void something(ActionEvent event) {
+        frameNumber++;
+        while (frameNumber < 500){
+            testFunction();
+            frameNumber++;
         }
     }
     
