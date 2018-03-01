@@ -47,7 +47,7 @@ public class FXMLDocumentController implements Initializable {
         try
         {
             //System.out.println("Grabbing frame");
-            //BufferedImage bufferedImage = AWTFrameGrab.getFrame(new File("C:\\Users\\caleb\\Documents\\! Schoolwork\\Java\\project\\JavaApp\\TestResources\\Taylor Swift Goat Parody.mp4"), frameNumber);
+            //BufferedImage bufferedImage = AWTFrameGrab.getFrame(new File("//C:\\Users\\Beasley\\Documents\\cscade saves\\spring 18\\java application development\\project\\project\\JavaApp\\TestResources\\TaylorSwiftGoatParody.mp4"), frameNumber);
             //Image image = SwingFXUtils.toFXImage(bufferedImage, null);
             //imgView.setImage(image);
             //System.out.println("Pringing frame");
@@ -57,7 +57,7 @@ public class FXMLDocumentController implements Initializable {
                 {
                     try{
                         //System.out.println("Grabbing frame " + frameNumber);
-                        File f = new File("C:\\Users\\caleb\\Documents\\! Schoolwork\\Java\\project\\JavaApp\\TestResources\\Taylor Swift Goat Parody.mp4");
+                        File f = new File("//C:\\Users\\Beasley\\Documents\\cscade saves\\spring 18\\java application development\\project\\project\\JavaApp\\TestResources\\TaylorSwiftGoatParody.mp4"), frameNumber);;
                         BufferedImage bufferedImage = AWTFrameGrab.getFrame(f, frameNumber);
                         int currentFrame = 0;
                         
