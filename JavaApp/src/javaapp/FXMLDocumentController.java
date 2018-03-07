@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -19,7 +18,11 @@ import org.jcodec.common.model.Picture;
 
 
 import javafx.embed.swing.SwingFXUtils;
+
 public class FXMLDocumentController implements Initializable {
+    
+    
+    File videoFile;
     
     @FXML
     private Button bigbutton;
@@ -27,6 +30,8 @@ public class FXMLDocumentController implements Initializable {
     private ImageView imgView;
     @FXML
     private Button nextFrame;
+    @FXML
+    private ImageView imgViewGray;
     
     @FXML
     private void handleButtonAction(ActionEvent event) {
@@ -37,57 +42,41 @@ public class FXMLDocumentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
+        videoFile = new File("C:\\Users\\caleb\\Documents\\! Schoolwork\\Java\\project\\JavaApp\\TestResources\\Taylor Swift Goat Parody.mp4");
     }
-    
-    int frameNumber = 340;
-    boolean isRunning = false;
     
     void testFunction()
     {
+        int frameNumber = 340;
         
         try
         {
-            //System.out.println("Grabbing frame");
-            //BufferedImage bufferedImage = AWTFrameGrab.getFrame(new File("C:\\Users\\caleb\\Documents\\! Schoolwork\\Java\\project\\JavaApp\\TestResources\\Taylor Swift Goat Parody.mp4"), frameNumber);
-            //Image image = SwingFXUtils.toFXImage(bufferedImage, null);
-            //imgView.setImage(image);
-            //System.out.println("Pringing frame");
-            
-            Thread mt = new Thread(){
-                public void run()
-                {
-                    try{
-                        //System.out.println("Grabbing frame " + frameNumber);
-                        File f = new File("C:\\Users\\caleb\\Documents\\! Schoolwork\\Java\\project\\JavaApp\\TestResources\\Taylor Swift Goat Parody.mp4");
-                         
-                        BufferedImage bufferedImage = AWTFrameGrab.getFrame(f, frameNumber);
-                        int currentFrame = 0;
-                        
-                        while(isRunning)
-                        {
-                            if(currentFrame != frameNumber)
-                            {
-                                System.out.println("Grabbing frame " + frameNumber);
-                                Image image = SwingFXUtils.toFXImage(bufferedImage, null);
-                                imgView.setImage(image);
-                                System.out.println("Printing frame");
-                                currentFrame = frameNumber;
-                            }
-                        }
-                    }
-                    catch(Exception e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
-            };
-            
-            if(!isRunning)
-            {
-                isRunning = true;
-                mt.start();
-            }
-            
+            System.out.println("Grabbing frame");
+            BufferedImage bufferedImage = AWTFrameGrab.getFrame(videoFile, frameNumber);
+            Image image = SwingFXUtils.toFXImage(bufferedImage, null);
+            imgView.setImage(image);
+            System.out.println("Pringing frame");
+
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+    
+    void testGrayScale()
+    {
+        int frameNumber = 340;
+        
+        try
+        {
+            System.out.println("Grabbing frame");
+            BufferedImage bufferedImage = AWTFrameGrab.getFrame(videoFile, frameNumber);
+            VideoInit videoInit = new VideoInit();
+            videoInit.greyScale(bufferedImage);
+            Image image = SwingFXUtils.toFXImage(bufferedImage, null);
+            imgViewGray.setImage(image);
+            System.out.println("Pringing frame");
         }
         catch(Exception e)
         {
@@ -97,11 +86,7 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void something(ActionEvent event) {
-        frameNumber++;
-        while (frameNumber < 500){
-            testFunction();
-            frameNumber++;
-        }
+        testGrayScale();
     }
     
 }
