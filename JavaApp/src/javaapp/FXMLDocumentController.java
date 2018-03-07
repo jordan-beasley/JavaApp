@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -58,6 +59,7 @@ public class FXMLDocumentController implements Initializable {
                     try{
                         //System.out.println("Grabbing frame " + frameNumber);
                         File f = new File("C:\\Users\\caleb\\Documents\\! Schoolwork\\Java\\project\\JavaApp\\TestResources\\Taylor Swift Goat Parody.mp4");
+                         
                         BufferedImage bufferedImage = AWTFrameGrab.getFrame(f, frameNumber);
                         int currentFrame = 0;
                         
