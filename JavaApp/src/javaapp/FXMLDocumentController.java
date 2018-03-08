@@ -8,16 +8,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javax.imageio.ImageIO;
 import org.jcodec.api.FrameGrab;
 import org.jcodec.api.awt.AWTFrameGrab;
 import org.jcodec.common.model.Picture;
-
-
 import javafx.embed.swing.SwingFXUtils;
+
 
 public class FXMLDocumentController implements Initializable {
     
@@ -30,8 +28,6 @@ public class FXMLDocumentController implements Initializable {
     private ImageView imgView;
     @FXML
     private Button nextFrame;
-    @FXML
-    private ImageView imgViewGray;
     
     @FXML
     private void handleButtonAction(ActionEvent event) {
@@ -64,7 +60,7 @@ public class FXMLDocumentController implements Initializable {
         }
     }
     
-    void testGrayScale()
+    void testAudioFunction()
     {
         int frameNumber = 340;
         
@@ -73,9 +69,7 @@ public class FXMLDocumentController implements Initializable {
             System.out.println("Grabbing frame");
             BufferedImage bufferedImage = AWTFrameGrab.getFrame(videoFile, frameNumber);
             AudioTrack at = new AudioTrack();
-            at.GrayScaleTest(bufferedImage);
             Image image = SwingFXUtils.toFXImage(bufferedImage, null);
-            imgViewGray.setImage(image);
             System.out.println("Pringing frame");
         }
         catch(Exception e)
@@ -86,7 +80,7 @@ public class FXMLDocumentController implements Initializable {
 
     @FXML
     private void something(ActionEvent event) {
-        testGrayScale();
+        testAudioFunction();
     }
     
 }

@@ -4,11 +4,10 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane id="AnchorPane" prefHeight="333.0" prefWidth="832.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javaapp.FXMLDocumentController">
+<AnchorPane id="AnchorPane" prefHeight="333.0" prefWidth="549.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javaapp.FXMLDocumentController">
     <children>
-        <Button fx:id="bigbutton" layoutX="233.0" layoutY="280.0" onAction="#handleButtonAction" text="Click Me!" />
-      <ImageView fx:id="imgView" fitHeight="206.0" fitWidth="383.0" layoutX="14.0" layoutY="49.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="14.0" />
+        <Button fx:id="bigbutton" layoutX="129.0" layoutY="280.0" onAction="#handleButtonAction" text="Click Me!" />
+      <ImageView fx:id="imgView" fitHeight="206.0" fitWidth="383.0" layoutX="83.0" layoutY="48.0" pickOnBounds="true" preserveRatio="true" />
       <Button fx:id="nextFrame" layoutX="361.0" layoutY="280.0" mnemonicParsing="false" onAction="#something" text="Button" />
-      <ImageView fx:id="imgViewGray" fitHeight="206.0" fitWidth="383.0" layoutX="604.0" layoutY="49.0" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="14.0" />
     </children>
 </AnchorPane>
