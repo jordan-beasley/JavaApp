@@ -1,8 +1,12 @@
 package javaapp;
 
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
+import java.util.Random;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,24 +22,56 @@ import org.jcodec.common.model.Picture;
 
 
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.EventHandler;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Slider;
+import javafx.scene.effect.Blend;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+
 public class FXMLDocumentController implements Initializable {
     
     @FXML
-    private Button bigbutton;
-    @FXML
     private ImageView imgView;
+    
+    Image image;
     @FXML
-    private Button nextFrame;
+    private Canvas drawCanvas;
+    @FXML
+    private Slider slider;
     
     @FXML
-    private void handleButtonAction(ActionEvent event) {
-        System.out.println("You clicked me!");
-        testFunction();
+    private AnchorPane anchorPane;
+    
+    BlurTool blur;
+    Tool currentTool;
+    @FXML
+    private Button btnBlack;
+    @FXML
+    private Button btnRed;
+    @FXML
+    private Button btnNo;
+    @FXML
+    private Button btnEraser;
+    
+    
+    @FXML
+    private void handleButtonAction(ActionEvent event) 
+    {
+        ClearTool();
+        currentTool = new Pen(drawCanvas);
     }
     
     @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+    public void initialize(URL url, ResourceBundle rb) 
+    {
+        GraphicsContext gc = drawCanvas.getGraphicsContext2D();
+        gc.setLineWidth(5);
+        gc.setStroke(Color.BLACK);
+        gc.strokeRect(0, 0, drawCanvas.getWidth(), drawCanvas.getHeight());
     }
     
     int frameNumber = 340;
@@ -46,60 +82,94 @@ public class FXMLDocumentController implements Initializable {
         
         try
         {
-            //System.out.println("Grabbing frame");
-            //BufferedImage bufferedImage = AWTFrameGrab.getFrame(new File("C:\\Users\\caleb\\Documents\\! Schoolwork\\Java\\project\\JavaApp\\TestResources\\Taylor Swift Goat Parody.mp4"), frameNumber);
-            //Image image = SwingFXUtils.toFXImage(bufferedImage, null);
+            System.out.println("Loading Image");
+            File file = new File("C:\\Users\\Beasley\\Documents\\cscade saves\\spring 18\\java application development\\project\\project\\JavaApp\\TestResources\\howl.jpg");
+            //image = new Image(file.toURI().toString());
             //imgView.setImage(image);
-            //System.out.println("Pringing frame");
             
-            Thread mt = new Thread(){
-                public void run()
-                {
-                    try{
-                        //System.out.println("Grabbing frame " + frameNumber);
-                        File f = new File("C:\\Users\\caleb\\Documents\\! Schoolwork\\Java\\project\\JavaApp\\TestResources\\Taylor Swift Goat Parody.mp4");
-                        BufferedImage bufferedImage = AWTFrameGrab.getFrame(f, frameNumber);
-                        int currentFrame = 0;
-                        
-                        while(isRunning)
-                        {
-                            if(currentFrame != frameNumber)
-                            {
-                                System.out.println("Grabbing frame " + frameNumber);
-                                Image image = SwingFXUtils.toFXImage(bufferedImage, null);
-                                imgView.setImage(image);
-                                System.out.println("Printing frame");
-                                currentFrame = frameNumber;
-                            }
-                        }
-                    }
-                    catch(Exception e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
-            };
-            
-            if(!isRunning)
-            {
-                isRunning = true;
-                mt.start();
-            }
-            
-        }
-        catch(Exception e)
+        }catch(Exception e)
         {
             e.printStackTrace();
         }
     }
 
     @FXML
-    private void something(ActionEvent event) {
-        frameNumber++;
-        while (frameNumber < 500){
-            testFunction();
-            frameNumber++;
+    private void something(ActionEvent event) 
+    {
+        ClearTool();
+        currentTool = new Pen(drawCanvas);
+        currentTool.SetOutlineColor(Color.RED);
+    }
+
+    @FXML
+    private void ChangeRadious(MouseEvent event) 
+    {
+        
+    }
+
+    @FXML
+    private void RemovePen(ActionEvent event) 
+    {
+        ClearTool();
+        TestFunction();
+    }
+
+    @FXML
+    private void UseEraser(ActionEvent event) 
+    {
+        ClearTool();
+        currentTool = new Eraser(drawCanvas);
+    }
+    
+    private void ClearTool()
+    {
+        if(currentTool != null)
+        {
+            currentTool.RemoveHandlers();
+            currentTool = null;
         }
     }
     
+    private void TestFunction()
+    {
+        EventHandler clickEvent = new EventHandler<MouseEvent>()
+        {
+            @Override
+            public void handle(MouseEvent event)
+            {
+                if(event.getTarget().toString().toLowerCase().contains("canvas@"))
+                {
+                    System.out.println("clicked shape");
+                    System.out.println();
+                    currentTool = null;
+                    anchorPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
+                    
+                }
+                else
+                {
+                    System.out.println("Adding shape");
+                    Random random = new Random();
+                    double rand = random.nextFloat();
+                    String shape = (rand > 0.5) ? "square" : "circle";
+                    currentTool = new Shape(event.getX(), event.getY(), "triangle");
+                    
+                    if(currentTool != null)
+                        anchorPane.getChildren().add(currentTool.GetCanvas());
+                }
+            }
+        };
+        
+        EventHandler dragEvent = new EventHandler<MouseEvent>()
+        {
+            @Override
+            public void handle(MouseEvent event)
+            {
+                currentTool = null;
+                anchorPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
+            }
+        };
+        
+        this.anchorPane.addEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
+        this.anchorPane.addEventHandler(MouseEvent.MOUSE_DRAGGED, dragEvent);
+    }
 }
