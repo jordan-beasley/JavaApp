@@ -142,8 +142,6 @@ public class FXMLDocumentController implements Initializable {
                     System.out.println("clicked shape");
                     System.out.println();
                     currentTool = null;
-                    anchorPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
-                    
                 }
                 else
                 {
@@ -155,7 +153,10 @@ public class FXMLDocumentController implements Initializable {
                     
                     if(currentTool != null)
                         anchorPane.getChildren().add(currentTool.GetCanvas());
+                    
                 }
+                
+                anchorPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
             }
         };
         

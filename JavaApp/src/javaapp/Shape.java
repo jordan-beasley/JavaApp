@@ -129,17 +129,17 @@ public class Shape extends Tool
                     }
                 };
                 
-                canvas.removeEventHandler(MouseEvent.MOUSE_DRAGGED, moveEvent);
-                canvas.addEventHandler(MouseEvent.MOUSE_RELEASED, stopResize);
+                //canvas.removeEventHandler(MouseEvent.MOUSE_DRAGGED, moveEvent);
+                //canvas.addEventHandler(MouseEvent.MOUSE_RELEASED, stopResize);
                 
                 if((width - e.getX()) <= 5 || (width - e.getX()) >= (width - 10))
                 {
                     canvas.getScene().setCursor(Cursor.W_RESIZE);
-                    canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, resizeWidth);
+                    //canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, resizeWidth);
                 }else if((height - e.getY()) <= 5 || (height - e.getY()) >= (height - 10))
                 {
                     canvas.getScene().setCursor(Cursor.N_RESIZE);
-                    canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, resizeHeight);
+                    //canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, resizeHeight);
                 }else
                 {
                     canvas.getScene().setCursor(Cursor.DEFAULT);
