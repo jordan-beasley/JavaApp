@@ -34,8 +34,6 @@ import javafx.scene.shape.Circle;
 
 public class FXMLDocumentController implements Initializable {
     
-    @FXML
-    private ImageView imgView;
     
     Image image;
     @FXML
@@ -56,6 +54,8 @@ public class FXMLDocumentController implements Initializable {
     private Button btnNo;
     @FXML
     private Button btnEraser;
+    @FXML
+    private ImageView imgView;
     
     
     @FXML
@@ -68,6 +68,9 @@ public class FXMLDocumentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) 
     {
+        filter f = new filter();
+        image = SwingFXUtils.toFXImage(f.getImage(), null);
+        imgView.setImage(image);
         GraphicsContext gc = drawCanvas.getGraphicsContext2D();
         gc.setLineWidth(5);
         gc.setStroke(Color.BLACK);
