@@ -1,31 +1,54 @@
 package javaapp;
 
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
-public class Eraser extends Tool 
+public class Eraser extends Tool
 {
-    GraphicsContext graphicsContext;
-    Canvas canvas;
-    
     EventHandler eraseDrag;
     EventHandler initErase;
+    AnchorPane controlPane;
     
-    double width = 5;
-    double height = 5;
-    
-    public Eraser(Canvas canvas)
+    public Eraser(Canvas canvas, AnchorPane controlPane)
     {
+        this.controlPane = controlPane;
         this.canvas = canvas;
+        this.width = 5;
+        this.height = 5;
+        
         graphicsContext = canvas.getGraphicsContext2D();
-        graphicsContext.setFill(Color.BLACK);
-        graphicsContext.setStroke(Color.BLACK);
         graphicsContext.setLineWidth(width);
         
+        LoadControls();
         AddHandlers();
+    }
+    
+    private void LoadControls()
+    {
+        try
+        {
+            controlPane.getChildren().removeAll(controlPane.getChildren());
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("PenToolUI.fxml"));
+            Pane controls = loader.load();
+            PenToolUIController pCon = loader.getController();
+            pCon.SetPen((Tool)this);
+            controls.localToParent(controlPane.getLayoutBounds());
+            AnchorPane.setBottomAnchor(controls, 0.0);
+            AnchorPane.setTopAnchor(controls, 0.0);
+            AnchorPane.setLeftAnchor(controls, 0.0);
+            AnchorPane.setRightAnchor(controls, 0.0);
+            controlPane.getChildren().setAll(controls);
+            
+        }catch(Exception e)
+        {
+            e.printStackTrace();
+        }
     }
     
     private void AddHandlers()
@@ -37,7 +60,7 @@ public class Eraser extends Tool
             public void handle(MouseEvent event)
             {
                 graphicsContext.moveTo(event.getX(), event.getY());
-                graphicsContext.clearRect(event.getX(), event.getY(), width, height);
+                graphicsContext.clearRect(event.getX() - (width / 2), event.getY() - (height / 2), width, height);
             }
         };
         
@@ -46,7 +69,8 @@ public class Eraser extends Tool
             @Override
             public void handle(MouseEvent event)
             {
-                graphicsContext.clearRect(event.getX(), event.getY(), width, height);
+                graphicsContext.moveTo(event.getX(), event.getY());
+                graphicsContext.clearRect(event.getX() - (width / 2), event.getY() - (height / 2), width, height);
             }
         };
         
@@ -55,54 +79,41 @@ public class Eraser extends Tool
         
     }
     
+    @Override
     public void RemoveHandlers()
     {
         this.canvas.removeEventHandler(MouseEvent.MOUSE_PRESSED, initErase);
         this.canvas.removeEventHandler(MouseEvent.MOUSE_DRAGGED, eraseDrag);
     }
     
-    public void SetFillColor(Color color)
+    @Override
+    public void SetFillColor(String hex)
     {
-        return;
+        return; // ignore color changes
     }
     
-    public void SetOutlineColor(Color color)
+    @Override
+    public void SetOutlineColor(String hex)
     {
-        return;
+        return; // ignore color changes
     }
     
-    public double GetWidth()
-    {
-        return this.width;
-    }
-    
-    public double GetHeight()
-    {
-        return this.height;
-    }
-    
+    @Override
     public Color GetFillColor()
     {
-        return null;
+        return null; // No color should be returned
     }
     
-    public Color GetOutlineColor()
-    {
-        return null;
-    }
-    
-    public void SetHeight(double height)
-    {
-        this.height = height;
-    }
-    
+    @Override
     public void SetWidth(double width)
     {
         this.width = width;
+        this.height = width;
     }
     
-    public Canvas GetCanvas()
+    @Override
+    public void SetHeight(double height)
     {
-        return this.graphicsContext.getCanvas();
+        SetWidth(height);
     }
 }

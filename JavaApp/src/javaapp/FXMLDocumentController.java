@@ -6,6 +6,8 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Dictionary;
 import java.util.Random;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -23,25 +25,24 @@ import org.jcodec.common.model.Picture;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Slider;
 import javafx.scene.effect.Blend;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
 public class FXMLDocumentController implements Initializable {
     
-    @FXML
-    private ImageView imgView;
     
     Image image;
     @FXML
     private Canvas drawCanvas;
-    @FXML
-    private Slider slider;
     
     @FXML
     private AnchorPane anchorPane;
@@ -51,60 +52,31 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Button btnBlack;
     @FXML
-    private Button btnRed;
-    @FXML
     private Button btnNo;
     @FXML
     private Button btnEraser;
+    @FXML
+    private AnchorPane controlPane;
     
+    //Dictionary elements = new Dictionary<>();
     
     @FXML
     private void handleButtonAction(ActionEvent event) 
     {
+        // remove the current tool and set a new tool
         ClearTool();
-        currentTool = new Pen(drawCanvas);
+        currentTool = new Pen(drawCanvas, controlPane);
     }
     
     @Override
     public void initialize(URL url, ResourceBundle rb) 
     {
-        GraphicsContext gc = drawCanvas.getGraphicsContext2D();
+        // add a black box around the border of the main canvas
+        /*GraphicsContext gc = drawCanvas.getGraphicsContext2D();
         gc.setLineWidth(5);
         gc.setStroke(Color.BLACK);
         gc.strokeRect(0, 0, drawCanvas.getWidth(), drawCanvas.getHeight());
-    }
-    
-    int frameNumber = 340;
-    boolean isRunning = false;
-    
-    void testFunction()
-    {
-        
-        try
-        {
-            System.out.println("Loading Image");
-            File file = new File("C:\\Users\\Beasley\\Documents\\cscade saves\\spring 18\\java application development\\project\\project\\JavaApp\\TestResources\\howl.jpg");
-            //image = new Image(file.toURI().toString());
-            //imgView.setImage(image);
-            
-        }catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
-    private void something(ActionEvent event) 
-    {
-        ClearTool();
-        currentTool = new Pen(drawCanvas);
-        currentTool.SetOutlineColor(Color.RED);
-    }
-
-    @FXML
-    private void ChangeRadious(MouseEvent event) 
-    {
-        
+        */
     }
 
     @FXML
@@ -118,11 +90,13 @@ public class FXMLDocumentController implements Initializable {
     private void UseEraser(ActionEvent event) 
     {
         ClearTool();
-        currentTool = new Eraser(drawCanvas);
+        currentTool = new Eraser(drawCanvas, controlPane);
     }
     
     private void ClearTool()
     {
+        // remove the handlers for the current tool
+        // and set it to null
         if(currentTool != null)
         {
             currentTool.RemoveHandlers();
@@ -132,40 +106,45 @@ public class FXMLDocumentController implements Initializable {
     
     private void TestFunction()
     {
+        // a click event for placing objects
         EventHandler clickEvent = new EventHandler<MouseEvent>()
         {
             @Override
             public void handle(MouseEvent event)
             {
+                // check if the object that was clicked wasn't 
+                // the main canvas itself
                 if(event.getTarget().toString().toLowerCase().contains("canvas@"))
                 {
-                    System.out.println("clicked shape");
-                    System.out.println();
-                    currentTool = null;
+                    //((Tool)event.getTarget()).SetWidth(((Tool)event.getTarget()).GetWidth() * 2);
                 }
                 else
                 {
-                    System.out.println("Adding shape");
-                    Random random = new Random();
-                    double rand = random.nextFloat();
-                    String shape = (rand > 0.5) ? "square" : "circle";
-                    currentTool = new Shape(event.getX(), event.getY(), "triangle");
-                    
-                    if(currentTool != null)
+                    if(currentTool == null)
+                    {
+                        Random random = new Random();
+                        double rand = random.nextFloat();
+                        String shape = "square"; //(rand <= 0.33) ? "square" : (rand <= 0.66) ? "circle" : "triangle";
+                        Tool newTool = new Shape(event.getX(), event.getY(), shape, controlPane);
+                        currentTool = newTool;
                         anchorPane.getChildren().add(currentTool.GetCanvas());
+                        System.out.println(event.getTarget());
+                    }
                     
                 }
                 
-                anchorPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
+                // remove this handler after the object has been placed
+                // anchorPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
             }
         };
         
+        // a click event for dragging to clear click event
         EventHandler dragEvent = new EventHandler<MouseEvent>()
         {
             @Override
             public void handle(MouseEvent event)
             {
-                currentTool = null;
+                //currentTool = null;
                 anchorPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
             }
         };

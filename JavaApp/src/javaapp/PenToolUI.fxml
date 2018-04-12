@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="281.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javaapp.PenToolUIController">
+   <children>
+      <Slider fx:id="slider" layoutX="211.0" layoutY="37.0" min="1.0" orientation="VERTICAL" prefHeight="327.0" prefWidth="18.0" showTickLabels="true" showTickMarks="true" value="1.0" AnchorPane.bottomAnchor="36.0" AnchorPane.rightAnchor="52.0" AnchorPane.topAnchor="37.0" />
+      <ComboBox fx:id="colorDropDown" layoutX="14.0" layoutY="37.0" prefWidth="150.0" promptText="Colors" AnchorPane.leftAnchor="14.0" />
+   </children>
+</AnchorPane>
