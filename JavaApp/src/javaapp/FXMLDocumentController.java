@@ -56,6 +56,8 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Button btnEraser;
     @FXML
+    private ImageView imgView;
+    @FXML
     private AnchorPane controlPane;
     
     //Dictionary elements = new Dictionary<>();
@@ -71,6 +73,10 @@ public class FXMLDocumentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) 
     {
+        filter f = new filter();
+        image = SwingFXUtils.toFXImage(f.getImage(), null);
+        imgView.setImage(image);
+        GraphicsContext gc = drawCanvas.getGraphicsContext2D();
         // add a black box around the border of the main canvas
         /*GraphicsContext gc = drawCanvas.getGraphicsContext2D();
         gc.setLineWidth(5);
