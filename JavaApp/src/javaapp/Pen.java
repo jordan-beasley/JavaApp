@@ -1,44 +1,77 @@
 package javaapp;
 
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 
 public class Pen extends Tool
 {
-    GraphicsContext graphicsContext;
-    Canvas canvas;
-    
     EventHandler drawDrag;
     EventHandler initDraw;
-    double height = 1;
-    double width = 1;
-    Color fillColor = Color.BLACK;
-    Color lineColor = Color.BLACK;
+    AnchorPane controlPane;
     
-    public Pen(Canvas canvas)
+    public Pen(Canvas canvas, AnchorPane controlPane)
     {
+        this.controlPane = controlPane;
         this.canvas = canvas;
         graphicsContext = canvas.getGraphicsContext2D();
         
+        LoadControls();
         AddHandlers();
+    }
+    
+    private void LoadControls()
+    {
+        Tool _this = this;
+        
+        Thread thread = new Thread(new Runnable()
+        {
+            @Override
+            public void run() 
+            {
+                try
+                {
+                    controlPane.getChildren().removeAll(controlPane.getChildren());
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("PenToolUI.fxml"));
+                    Pane controls = loader.load();
+                    PenToolUIController pCon = loader.getController();
+                    pCon.SetPen(_this);
+                    controls.localToParent(controlPane.getLayoutBounds());
+                    AnchorPane.setBottomAnchor(controls, 0.0);
+                    AnchorPane.setTopAnchor(controls, 0.0);
+                    AnchorPane.setLeftAnchor(controls, 0.0);
+                    AnchorPane.setRightAnchor(controls, 0.0);
+                    controlPane.getChildren().setAll(controls);
+
+                }catch(Exception e)
+                {
+                    e.printStackTrace();
+                }
+                
+            }
+        });
+        
+        thread.run();
+        
     }
     
     private void AddHandlers()
     {
-        graphicsContext.setFill(fillColor);
-        graphicsContext.setStroke(lineColor);
-        graphicsContext.setLineWidth(width);
-        
         initDraw = new EventHandler<MouseEvent>()
         {
             @Override
             public void handle(MouseEvent event)
             {
+                graphicsContext.setFill(GetFillColor());
+                graphicsContext.setStroke(GetOutlineColor());
+                graphicsContext.setLineWidth(width);
                 graphicsContext.beginPath();
                 graphicsContext.moveTo(event.getX(), event.getY());
                 graphicsContext.stroke();
@@ -50,6 +83,9 @@ public class Pen extends Tool
             @Override
             public void handle(MouseEvent event)
             {
+                graphicsContext.setFill(GetFillColor());
+                graphicsContext.setStroke(GetOutlineColor());
+                graphicsContext.setLineWidth(width);
                 graphicsContext.lineTo(event.getX(), event.getY());
                 graphicsContext.stroke();
             }
@@ -60,56 +96,10 @@ public class Pen extends Tool
         
     }
     
+    @Override
     public void RemoveHandlers()
     {
         this.canvas.removeEventHandler(MouseEvent.MOUSE_PRESSED, initDraw);
         this.canvas.removeEventHandler(MouseEvent.MOUSE_DRAGGED, drawDrag);
-    }
-    
-    public void SetFillColor(Color color)
-    {
-        fillColor = color;
-        graphicsContext.setFill(color);
-    }
-    
-    public void SetOutlineColor(Color color)
-    {
-        lineColor = color;
-        graphicsContext.setStroke(color);
-    }
-    
-    public double GetHeight()
-    {
-        return this.height;
-    }
-    
-    public double GetWidth()
-    {
-        return this.width;
-    }
-    
-    public Color GetFillColor()
-    {
-        return this.fillColor;
-    }
-    
-    public Color GetOutlineColor()
-    {
-        return this.lineColor;
-    }
-    
-    public void SetHeight(double height)
-    {
-        this.height = height;
-    }
-    
-    public void SetWidth(double width)
-    {
-        this.width = width;
-    }
-    
-    public Canvas GetCanvas()
-    {
-        return this.graphicsContext.getCanvas();
     }
 }
