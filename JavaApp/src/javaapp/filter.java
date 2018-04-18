@@ -15,9 +15,9 @@ public class filter {
     BufferedImage img;
     int width;
     int height;
-    double offsetRed;
-    double offsetGreen; //offsets must be 0-100 values
-    double offsetBlue;
+    double offsetRed = 100;
+    double offsetGreen = 100; //offsets must be 0-100 values
+    double offsetBlue = 100;
     
     public filter()
     {
