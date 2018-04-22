@@ -16,6 +16,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.SpinnerValueFactory.DoubleSpinnerValueFactory;
@@ -27,7 +29,7 @@ public class ShapeToolUIController implements Initializable
         -Color (fill, outline)
         -Height
         -Width
-        Rotate
+        -Rotate
         Scale
         Position
     */
@@ -47,6 +49,8 @@ public class ShapeToolUIController implements Initializable
     private Spinner<?> spHeight;
     @FXML
     private Spinner<?> spWidth;
+    @FXML
+    private Spinner<?> spRotation;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) 
@@ -111,8 +115,10 @@ public class ShapeToolUIController implements Initializable
         
         SpinnerValueFactory heightValueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(1, 10000);
         SpinnerValueFactory widthValueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(1, 10000);
+        SpinnerValueFactory rotationValueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(-360, 360);
         spHeight.setValueFactory(heightValueFactory);
         spWidth.setValueFactory(widthValueFactory);
+        spRotation.setValueFactory(rotationValueFactory);
         
         spHeight.getValueFactory().valueProperty().addListener((obs, oldValue, newValue) -> 
         {
@@ -133,7 +139,18 @@ public class ShapeToolUIController implements Initializable
                 this.shape.SetWidth(value);
             }
         });
+        
+        spRotation.getValueFactory().valueProperty().addListener((obs, oldValue, newValue) -> 
+        {
+            if(this.shape != null)
+            {
+                DoubleSpinnerValueFactory factory = (DoubleSpinnerValueFactory)spRotation.getValueFactory();
+                double angle = factory.getValue();
+                this.shape.Rotate(angle);
+            }
+        });
     }
+    
     
     public void SetShape(Tool shape)
     {
@@ -141,13 +158,15 @@ public class ShapeToolUIController implements Initializable
         
         if(this.shape != null)
         {
+            
             cbSetFill.setSelected(this.shape.HasFill());
             SpinnerValueFactory heightFactory = spHeight.getValueFactory();
             SpinnerValueFactory widthFactory = spWidth.getValueFactory();
+            SpinnerValueFactory rotationFactory = spRotation.getValueFactory();
             
             heightFactory.setValue(this.shape.GetHeight());
             widthFactory.setValue(this.shape.GetWidth());
-            
+            rotationFactory.setValue(this.shape.GetRotation());
             
             String lineHex = this.shape.GetOutlineColor().toString().substring(2, 8);
             String lineColor = null;
@@ -181,7 +200,6 @@ public class ShapeToolUIController implements Initializable
             fillColorDropDown.setPromptText(prmp);
             
             fillColorDropDown.setDisable(!this.shape.HasFill());
-            
         }
     }
 }

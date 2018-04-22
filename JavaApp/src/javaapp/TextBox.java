@@ -1,13 +1,11 @@
 package javaapp;
 
+import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.ContextMenuEvent;
@@ -15,15 +13,17 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
-
-public class Shape extends Tool
+public class TextBox extends Tool
 {
     double padding = 20; // padding to add around shape for hover outline
     AnchorPane controlPane;
     ContextMenu contextMenu;
+    double fontSize = 50;
     
-    public Shape(double x, double y, String shapeType, AnchorPane controlPane)
+    public TextBox(double x, double y, AnchorPane controlPane)
     {
         this.controlPane = controlPane;
         
@@ -32,7 +32,6 @@ public class Shape extends Tool
         this.canvas = new Canvas();
         this.x = x;
         this.y = y;
-        this.shapeType = shapeType.toLowerCase();
         
         canvas.setWidth(width + padding);
         canvas.setHeight(height + padding);
@@ -89,10 +88,10 @@ public class Shape extends Tool
                 try
                 {
                     controlPane.getChildren().removeAll(controlPane.getChildren());
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("ShapeToolUI.fxml"));
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("TextBoxToolUI.fxml"));
                     Pane controls = loader.load();
-                    ShapeToolUIController sCon = loader.getController();
-                    sCon.SetShape(_this);
+                    TextBoxToolUIController controller = loader.getController();
+                    controller.SetTextBox(_this);
                     controls.localToParent(controlPane.getLayoutBounds());
                     AnchorPane.setBottomAnchor(controls, 0.0);
                     AnchorPane.setTopAnchor(controls, 0.0);
@@ -118,42 +117,23 @@ public class Shape extends Tool
         graphicsContext.setLineWidth(1);
         graphicsContext.setFill(fillColor);
         graphicsContext.setStroke(lineColor);
+        graphicsContext.setFont(font);
         
-        if("square".equals(shapeType))
+        
+        Text textString = new Text(text);
+        Font textFont = new Font(font.getFamily(), fontSize);
+        textString.setFont(textFont);
+        double fontWidth = textString.layoutBoundsProperty().get().getWidth();
+        double fontHeight = textString.layoutBoundsProperty().get().getHeight();
+        
+        canvas.setWidth(fontWidth + padding);
+        canvas.setHeight(fontHeight + padding);
+        
+        graphicsContext.strokeText(text, padding / 2,  fontHeight - (padding / 2));
+        
+        if(fillShape)
         {
-            
-            graphicsContext.strokeRect(padding / 2,  padding / 2, width, height);
-            
-            if(fillShape)
-            {
-                graphicsContext.fillRect(padding / 2,  padding / 2, width, height);
-            }
-        }
-        else if("circle".equals(shapeType))
-        {
-            graphicsContext.strokeOval(padding / 2,  padding / 2, width, height);
-            
-            if(fillShape)
-            {
-                graphicsContext.fillOval(padding / 2,  padding / 2, width, height);
-            }
-        }
-        else if("triangle".equals(shapeType))
-        {
-            // draw inside of triangle
-            graphicsContext.beginPath();
-            graphicsContext.moveTo(padding / 2, height + (padding / 2));
-            graphicsContext.lineTo((width / 2) + (padding / 2), padding / 2);
-            graphicsContext.lineTo(width + (padding / 2), height + (padding / 2));
-            graphicsContext.closePath();
-            
-            if(fillShape)
-            {
-                graphicsContext.fill();
-            }
-            
-            // draw outine of shape
-            graphicsContext.stroke();
+            graphicsContext.fillText(text, padding / 2,  fontHeight - (padding / 2));
         }
         
     }
@@ -179,6 +159,7 @@ public class Shape extends Tool
             @Override
             public void handle(MouseEvent e)
             {
+                // draw a border around tool area
                 graphicsContext.setLineWidth(1);
                 graphicsContext.setStroke(boxBorderColor);
                 graphicsContext.setLineDashes(new double[]{8});
@@ -208,7 +189,7 @@ public class Shape extends Tool
             }
         };
         
-        //canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
+        canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
         canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, moveEvent);
         canvas.addEventHandler(MouseEvent.MOUSE_ENTERED, enterEvent);
         canvas.addEventHandler(MouseEvent.MOUSE_EXITED, exitEvent);
@@ -239,18 +220,10 @@ public class Shape extends Tool
     }
     
     @Override
-    public void SetHeight(double height)
+    public void SetFontSize(double fontSize)
     {
-        this.height = height;
-        canvas.setHeight(height + padding);
-        Update();
-    }
-    
-    @Override
-    public void SetWidth(double width)
-    {
-        this.width = width;
-        canvas.setWidth(width + padding);
+        this.fontSize = fontSize;
+        font = new Font(font.getFamily(), this.fontSize);
         Update();
     }
     
@@ -274,9 +247,42 @@ public class Shape extends Tool
         Update();
     }
     
+    @Override
     public void Rotate(double angle)
     {
         this.rotation = angle;
         canvas.setRotate(angle);
+    }
+    
+    @Override
+    public void SetText(String text)
+    {
+        this.text = text.trim();
+        Update();
+    }
+    
+    @Override
+    public double GetWidth()
+    {
+        return this.fontSize * text.length();
+    }
+    
+    @Override
+    public double GetHeight()
+    {
+        return this.fontSize;
+    }
+    
+    @Override
+    public double GetFontSize()
+    { 
+        return this.fontSize;
+    }
+    
+    @Override
+    public void SetFontFamily(String family)
+    {
+        this.font = new Font(family, this.fontSize);
+        Update();
     }
 }

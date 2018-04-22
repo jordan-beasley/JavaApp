@@ -31,6 +31,8 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Slider;
 import javafx.scene.effect.Blend;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
@@ -57,6 +59,11 @@ public class FXMLDocumentController implements Initializable {
     private Button btnEraser;
     @FXML
     private AnchorPane controlPane;
+    @FXML
+    private Button btnText;
+    
+    EventHandler dragEvent;
+    EventHandler clickEvent;
     
     //Dictionary elements = new Dictionary<>();
     
@@ -68,6 +75,7 @@ public class FXMLDocumentController implements Initializable {
         currentTool = new Pen(drawCanvas, controlPane);
     }
     
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) 
     {
@@ -78,12 +86,13 @@ public class FXMLDocumentController implements Initializable {
         gc.strokeRect(0, 0, drawCanvas.getWidth(), drawCanvas.getHeight());
         */
     }
-
+    
+    
     @FXML
     private void RemovePen(ActionEvent event) 
     {
         ClearTool();
-        TestFunction();
+        PlaceShape();
     }
 
     @FXML
@@ -102,18 +111,29 @@ public class FXMLDocumentController implements Initializable {
             currentTool.RemoveHandlers();
             currentTool = null;
         }
+        
+        if(dragEvent != null)
+        {
+            anchorPane.removeEventHandler(MouseEvent.MOUSE_DRAGGED, dragEvent);
+        }
+        
+        if(clickEvent != null)
+        {
+            anchorPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
+        }
     }
     
-    private void TestFunction()
+    private void PlaceShape()
     {
         // a click event for placing objects
-        EventHandler clickEvent = new EventHandler<MouseEvent>()
+        clickEvent = new EventHandler<MouseEvent>()
         {
             @Override
             public void handle(MouseEvent event)
             {
                 // check if the object that was clicked wasn't 
                 // the main canvas itself
+                System.out.println(event.getTarget());
                 if(event.getTarget().toString().toLowerCase().contains("canvas@"))
                 {
                     //((Tool)event.getTarget()).SetWidth(((Tool)event.getTarget()).GetWidth() * 2);
@@ -129,6 +149,7 @@ public class FXMLDocumentController implements Initializable {
                         currentTool = newTool;
                         anchorPane.getChildren().add(currentTool.GetCanvas());
                         System.out.println(event.getTarget());
+                        anchorPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
                     }
                     
                 }
@@ -139,7 +160,7 @@ public class FXMLDocumentController implements Initializable {
         };
         
         // a click event for dragging to clear click event
-        EventHandler dragEvent = new EventHandler<MouseEvent>()
+        dragEvent = new EventHandler<MouseEvent>()
         {
             @Override
             public void handle(MouseEvent event)
@@ -150,6 +171,103 @@ public class FXMLDocumentController implements Initializable {
         };
         
         this.anchorPane.addEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
-        this.anchorPane.addEventHandler(MouseEvent.MOUSE_DRAGGED, dragEvent);
+        //this.anchorPane.addEventHandler(MouseEvent.MOUSE_DRAGGED, dragEvent);
+    }
+
+    private void CustomShape(ActionEvent event) 
+    {
+        ClearTool();
+        //currentTool = new CustomShape(drawCanvas, controlPane);
+        //anchorPane.getChildren().add(currentTool.GetCanvas());
+    }
+    
+    private void GetPixelColor()
+    {
+        // a click event for dragging to clear click event
+        /*EventHandler moveEvent = new EventHandler<MouseEvent>()
+        {
+            @Override
+            public void handle(MouseEvent event)
+            { 
+                if(event.getTarget().toString().toLowerCase().contains("canvas@") ||
+                        event.getTarget().toString().toLowerCase().contains("canvas["))
+                {
+                    // place a canvas over the current objects on the drawCanvas
+                    // take a snapshot of that canvas to get a writable image, then remove it from the view
+                    // use event x and y to get pixel values from the writable image of that canvas
+                    Canvas temp = ((Canvas)event.getTarget());
+                    WritableImage writableImage = new WritableImage((int)temp.getWidth(), (int)temp.getHeight());
+                    ((Canvas)event.getTarget()).snapshot(null, writableImage);
+                    PixelReader pr = writableImage.getPixelReader();
+                    System.out.println(pr.getColor(0, 0));
+                }
+                
+                System.out.println(event.getTarget().toString());
+            }
+        };
+        
+        EventHandler clickEvent = new EventHandler<MouseEvent>()
+        {
+            @Override
+            public void handle(MouseEvent event)
+            {
+                
+                // remove this handler after the object has been placed
+                anchorPane.removeEventHandler(MouseEvent.MOUSE_MOVED, moveEvent);
+                anchorPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
+            }
+        };
+        
+        this.anchorPane.addEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
+        this.anchorPane.addEventHandler(MouseEvent.MOUSE_MOVED, moveEvent);*/
+    }
+
+    @FXML
+    private void AddText(ActionEvent event) 
+    {
+        clickEvent = new EventHandler<MouseEvent>()
+        {
+            @Override
+            public void handle(MouseEvent event)
+            {
+                // check if the object that was clicked wasn't 
+                // the main canvas itself
+                /*if(event.getTarget().toString().toLowerCase().contains("canvas@"))
+                {
+                    //((Tool)event.getTarget()).SetWidth(((Tool)event.getTarget()).GetWidth() * 2);
+                }
+                else
+                {
+                    
+                }*/
+                
+                if(currentTool != null)
+                {
+                    currentTool = null;
+                }
+                
+                Tool newTool = new TextBox(event.getX(), event.getY(), controlPane);
+                currentTool = newTool;
+                anchorPane.getChildren().add(currentTool.GetCanvas());
+                anchorPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
+                
+                // remove this handler after the object has been placed
+                // anchorPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
+            }
+        };
+        
+        // a click event for dragging to clear click event
+        dragEvent = new EventHandler<MouseEvent>()
+        {
+            @Override
+            public void handle(MouseEvent event)
+            {
+                currentTool = null;
+                anchorPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
+            }
+        };
+        
+        this.anchorPane.addEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
+        //this.anchorPane.addEventHandler(MouseEvent.MOUSE_DRAGGED, dragEvent);
     }
 }
