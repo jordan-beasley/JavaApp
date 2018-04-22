@@ -171,47 +171,7 @@ public class TextBoxToolUIController implements Initializable {
         
         if(this.textBox != null)
         {
-            textField.setText(this.textBox.GetText());
-            cbSetFill.setSelected(this.textBox.HasFill());
-            SpinnerValueFactory sizeFactory = spFontSize.getValueFactory();
-            SpinnerValueFactory rotationFactory = spRotation.getValueFactory();
-            
-            sizeFactory.setValue(this.textBox.GetFontSize());
-            rotationFactory.setValue(this.textBox.GetRotation());
-            
-            String lineHex = this.textBox.GetOutlineColor().toString().substring(2, 8);
-            String lineColor = null;
-            
-            
-            for(String key : colors.keySet())
-            {
-                if(lineHex.equals(colors.get(key)))
-                {
-                    lineColor = key;
-                    break;
-                }
-            }
-            
-            String prmp = (lineColor != null) ? lineColor : "Colors";
-            outlineColorDropDown.setPromptText(prmp);
-            
-            String fillHex = this.textBox.GetFillColor().toString().substring(2, 8);
-            String fillColor = null;
-            
-            for(String key : colors.keySet())
-            {
-                if(fillHex.equals(colors.get(key)))
-                {
-                    fillColor = key;
-                    break;
-                }
-            }
-            
-            prmp = (fillColor != null) ? fillColor : "Colors";
-            fillColorDropDown.setPromptText(prmp);
-            fillColorDropDown.setDisable(!this.textBox.HasFill());
-            
-            fontDropDown.setPromptText(this.textBox.GetFont());
+            UpdateFields();
         }
     }
     

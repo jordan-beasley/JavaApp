@@ -24,6 +24,7 @@
                               <Button fx:id="btnNo" layoutX="35.0" layoutY="100.0" mnemonicParsing="false" onAction="#RemovePen" text="Shape" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="35.0" />
                               <Button fx:id="btnEraser" layoutX="35.0" layoutY="58.0" mnemonicParsing="false" onAction="#UseEraser" text="Eraser" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="35.0" />
                               <Button fx:id="btnText" layoutX="91.0" layoutY="142.0" mnemonicParsing="false" onAction="#AddText" text="Text" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="35.0" />
+                              <Button fx:id="btnAny" layoutX="98.0" layoutY="184.0" mnemonicParsing="false" onAction="#TestButton" text="Testing Button" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="35.0" />
                            </children>
                         </AnchorPane>
                       <AnchorPane fx:id="controlPane" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" SplitPane.resizableWithParent="false" />

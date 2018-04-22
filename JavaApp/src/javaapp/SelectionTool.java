@@ -4,10 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.ContextMenuEvent;
@@ -15,37 +12,44 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.Node;
 
-
-public class Shape extends Tool
+public class SelectionTool extends Tool
 {
     double padding = 20; // padding to add around shape for hover outline
     AnchorPane controlPane;
     ContextMenu contextMenu;
+    Pane parent;
     
+    boolean placed = false;
     double startingX = 0;
     double startingY = 0;
     
-    public Shape(double x, double y, String shapeType, AnchorPane controlPane)
+    public SelectionTool(double x, double y, Pane parent, AnchorPane controlPane)
     {
         this.controlPane = controlPane;
+        this.parent = parent;
         
-        this.height = 55;
-        this.width = 55;
+        this.height = 1;
+        this.width = 1;
         this.canvas = new Canvas();
         this.x = x;
         this.y = y;
-        this.shapeType = shapeType.toLowerCase();
         
-        canvas.setWidth(width + padding);
-        canvas.setHeight(height + padding);
-        canvas.setLayoutX(x - (canvas.getWidth() / 2));
-        canvas.setLayoutY(y - (canvas.getHeight() / 2));
+        //this.lineColor = Color.web("4488ff");
+        this.lineColor = Color.web("005dff");
+        this.fillColor = Color.web("619aff", 0.5);
+        
+        
         
         graphicsContext = canvas.getGraphicsContext2D();
+        graphicsContext.setLineWidth(1);
+        graphicsContext.setFill(fillColor);
+        graphicsContext.setStroke(lineColor);
         
-        LoadControls();
-        Update();
+        
+        //LoadControls();
+        //Update();
         AddHandlers();
         AddContextMenu();
     }
@@ -53,15 +57,8 @@ public class Shape extends Tool
     private void AddContextMenu()
     {
         contextMenu = new ContextMenu();
-        MenuItem itemToFront = new MenuItem("Move to Front");
         MenuItem itemDeleteShape = new MenuItem("Delete");
         
-        itemToFront.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                canvas.toFront();
-            }
-        });
         itemDeleteShape.setOnAction(new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent event) {
@@ -72,7 +69,6 @@ public class Shape extends Tool
             }
         });
         
-        contextMenu.getItems().add(itemToFront);
         contextMenu.getItems().add(itemDeleteShape);
         
         canvas.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
@@ -117,68 +113,12 @@ public class Shape extends Tool
     @Override
     public void Update()
     {
-        graphicsContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        graphicsContext.setLineWidth(1);
-        graphicsContext.setFill(fillColor);
-        graphicsContext.setStroke(lineColor);
-        
-        if("square".equals(shapeType))
-        {
-            
-            graphicsContext.strokeRect(padding / 2,  padding / 2, width, height);
-            
-            if(fillShape)
-            {
-                graphicsContext.fillRect(padding / 2,  padding / 2, width, height);
-            }
-        }
-        else if("circle".equals(shapeType))
-        {
-            graphicsContext.strokeOval(padding / 2,  padding / 2, width, height);
-            
-            if(fillShape)
-            {
-                graphicsContext.fillOval(padding / 2,  padding / 2, width, height);
-            }
-        }
-        else if("triangle".equals(shapeType))
-        {
-            // draw inside of triangle
-            graphicsContext.beginPath();
-            graphicsContext.moveTo(padding / 2, height + (padding / 2));
-            graphicsContext.lineTo((width / 2) + (padding / 2), padding / 2);
-            graphicsContext.lineTo(width + (padding / 2), height + (padding / 2));
-            graphicsContext.closePath();
-            
-            if(fillShape)
-            {
-                graphicsContext.fill();
-            }
-            
-            // draw outine of shape
-            graphicsContext.stroke();
-        }
-        
+        graphicsContext.clearRect(0, 0, width, height);
+        graphicsContext.fillRect(0,  0, width, height);
     }
     
     private void AddHandlers()
     {
-        
-        moveEvent = new EventHandler<MouseEvent>(){
-                    
-            @Override
-            public void handle(MouseEvent e)
-            {
-                if(resizing)
-                    return;
-                
-                canvas.setLayoutX(e.getSceneX() - (canvas.getWidth() / 2));
-                canvas.setLayoutY(e.getSceneY() - (canvas.getHeight() / 2));
-                
-                
-            }
-        };
-        
         enterEvent = new EventHandler<MouseEvent>(){
                     
             @Override
@@ -187,7 +127,7 @@ public class Shape extends Tool
                 graphicsContext.setLineWidth(1);
                 graphicsContext.setStroke(boxBorderColor);
                 graphicsContext.setLineDashes(new double[]{8});
-                graphicsContext.strokeRect(0, 0, canvas.getWidth(), canvas.getHeight());
+                graphicsContext.strokeRect(0, 0, width, height);
                 graphicsContext.setLineDashes(new double[]{0});
             }
         };
@@ -204,29 +144,54 @@ public class Shape extends Tool
         };
         
         
-        clickEvent = new EventHandler<MouseEvent>(){
+        moveEvent = new EventHandler<MouseEvent>(){
                     
             @Override
             public void handle(MouseEvent e)
             {
-                LoadControls();
+                width = e.getSceneX() - canvas.getLayoutX();
+                height = e.getSceneY() - canvas.getLayoutY();
+                
+                canvas.setWidth(width);
+                canvas.setHeight(height);
+                graphicsContext.clearRect(0, 0, width, height);
+                graphicsContext.strokeRect(0,  0, width, height);
+                graphicsContext.fillRect(0,  0, width, height);
             }
         };
         
-        canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
-        canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, moveEvent);
-        canvas.addEventHandler(MouseEvent.MOUSE_ENTERED, enterEvent);
-        canvas.addEventHandler(MouseEvent.MOUSE_EXITED, exitEvent);
+        clickEvent = new EventHandler<MouseEvent>()
+        {
+                    
+            @Override
+            public void handle(MouseEvent e)
+            {
+                
+                if(placed == false)
+                {
+                    canvas.setLayoutX(x);
+                    canvas.setLayoutY(y);
+                    canvas.setWidth(width);
+                    canvas.setHeight(height);
+                    parent.addEventHandler(MouseEvent.MOUSE_MOVED, moveEvent);
+                    placed = true;
+                }else
+                {
+                    parent.removeEventHandler(MouseEvent.MOUSE_MOVED, moveEvent);
+                    parent.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
+                }
+                
+            }
+        };
+        
+        parent.addEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
     }
     
     @Override
     public void RemoveHandlers() 
     {
-        //canvas.removeEventHandler(MouseEvent.MOUSE_DRAGGED, moveEvent);
-        //canvas.removeEventHandler(MouseEvent.MOUSE_ENTERED, enterEvent);
-        //canvas.addEventHandler(MouseEvent.MOUSE_MOVED, resizeEvent);
-        //canvas.removeEventHandler(MouseEvent.MOUSE_EXITED, exitEvent);
-        //canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
+        parent.removeEventHandler(MouseEvent.MOUSE_CLICKED, this.clickEvent);
+        parent.removeEventHandler(MouseEvent.MOUSE_MOVED, this.moveEvent);
     }
 
     @Override
