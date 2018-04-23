@@ -12,6 +12,7 @@ import java.util.Random;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -29,6 +30,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Slider;
 import javafx.scene.effect.Blend;
 import javafx.scene.input.MouseEvent;
@@ -59,6 +61,8 @@ public class FXMLDocumentController implements Initializable {
     private ImageView imgView;
     @FXML
     private AnchorPane controlPane;
+    @FXML
+    private AnchorPane colorPickerPane;
     
     //Dictionary elements = new Dictionary<>();
     
@@ -73,16 +77,29 @@ public class FXMLDocumentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) 
     {
-        filter f = new filter();
-        image = SwingFXUtils.toFXImage(f.getImage(), null);
-        imgView.setImage(image);
-        GraphicsContext gc = drawCanvas.getGraphicsContext2D();
+        //filter f = new filter();
+        //image = SwingFXUtils.toFXImage(f.getImage(), null);
+        //imgView.setImage(image);
+        //GraphicsContext gc = drawCanvas.getGraphicsContext2D();
         // add a black box around the border of the main canvas
         /*GraphicsContext gc = drawCanvas.getGraphicsContext2D();
         gc.setLineWidth(5);
         gc.setStroke(Color.BLACK);
         gc.strokeRect(0, 0, drawCanvas.getWidth(), drawCanvas.getHeight());
         */
+        
+        try
+        {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("ColorPickerUI.fxml"));
+            Pane controls = loader.load();
+            //PenToolUIController pCon = loader.getController();
+
+            //ColorPicker colorPicker = new ColorPicker();
+            controlPane.getChildren().setAll(controls);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        
     }
 
     @FXML

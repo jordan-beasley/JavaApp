@@ -4,6 +4,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -39,15 +40,17 @@ public class Pen extends Tool
                 try
                 {
                     controlPane.getChildren().removeAll(controlPane.getChildren());
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("PenToolUI.fxml"));
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("filterUI.fxml"));
                     Pane controls = loader.load();
-                    PenToolUIController pCon = loader.getController();
-                    pCon.SetPen(_this);
+                    //PenToolUIController pCon = loader.getController();
+                    FilterUIController pCon = loader.getController();
+                    //pCon.SetPen(_this);
                     controls.localToParent(controlPane.getLayoutBounds());
                     AnchorPane.setBottomAnchor(controls, 0.0);
                     AnchorPane.setTopAnchor(controls, 0.0);
                     AnchorPane.setLeftAnchor(controls, 0.0);
                     AnchorPane.setRightAnchor(controls, 0.0);
+                    ColorPicker colorPicker = new ColorPicker();
                     controlPane.getChildren().setAll(controls);
 
                 }catch(Exception e)
