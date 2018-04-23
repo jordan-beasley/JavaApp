@@ -148,7 +148,7 @@ public class FXMLDocumentController implements Initializable {
                         Random random = new Random();
                         double rand = random.nextFloat();
                         String shape = "square"; //(rand <= 0.33) ? "square" : (rand <= 0.66) ? "circle" : "triangle";
-                        Tool newTool = new Shape(event.getX(), event.getY(), shape, controlPane);
+                        Tool newTool = new FilteredImage(event.getX(), event.getY(), shape, controlPane); //new Shape(event.getX(), event.getY(), shape, controlPane);
                         currentTool = newTool;
                         anchorPane.getChildren().add(currentTool.GetCanvas());
                         System.out.println(event.getTarget());
