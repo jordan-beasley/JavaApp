@@ -18,6 +18,8 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 
 /**
@@ -31,7 +33,7 @@ public class FilteredImage extends Tool
     BufferedImage bufferedImg;
     Image img;
     
-    public FilteredImage(double x, double y, String shapeType, AnchorPane controlPane)
+    public FilteredImage(double x, double y, AnchorPane parent, AnchorPane controlPane)
     {
         this.controlPane = controlPane;
         
@@ -50,8 +52,8 @@ public class FilteredImage extends Tool
         graphicsContext = canvas.getGraphicsContext2D();
         
         //LoadControls();
-        Update();
-        AddHandlers();
+        //Update();
+        //AddHandlers();
     }
     
     private void LoadControls()

@@ -21,7 +21,8 @@ public class filter {
     
     public filter()
     {
-        try{
+        try
+        {
             img = ImageIO.read(new File("C:\\Users\\caleb\\Pictures\\test.jpg"));
             width = img.getWidth();
             height = img.getHeight();
