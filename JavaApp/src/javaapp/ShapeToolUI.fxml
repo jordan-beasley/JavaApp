@@ -18,5 +18,7 @@
       <Spinner fx:id="spWidth" editable="true" layoutX="22.0" layoutY="270.0" prefHeight="31.0" prefWidth="150.0" AnchorPane.leftAnchor="22.0" />
       <Label layoutX="27.0" layoutY="169.0" prefHeight="31.0" prefWidth="120.0" text="Height" AnchorPane.leftAnchor="27.0" />
       <Label layoutX="27.0" layoutY="239.0" prefHeight="31.0" prefWidth="120.0" text="Width" AnchorPane.leftAnchor="27.0" />
+      <Spinner fx:id="spRotation" editable="true" layoutX="197.0" layoutY="200.0" prefHeight="31.0" prefWidth="150.0" AnchorPane.leftAnchor="197.0" />
+      <Label layoutX="197.0" layoutY="169.0" prefHeight="31.0" prefWidth="120.0" text="Rotation" AnchorPane.leftAnchor="197.0" />
    </children>
 </AnchorPane>

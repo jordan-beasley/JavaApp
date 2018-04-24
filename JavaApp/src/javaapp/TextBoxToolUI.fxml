@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.141" fx:controller="javaapp.TextBoxToolUIController">
+    <children>
+      <ComboBox fx:id="fillColorDropDown" layoutX="27.0" layoutY="53.0" prefWidth="150.0" promptText="Color" AnchorPane.leftAnchor="27.0" />
+      <ComboBox fx:id="outlineColorDropDown" layoutX="27.0" layoutY="125.0" prefWidth="150.0" promptText="Color" AnchorPane.leftAnchor="27.0" />
+      <Label layoutX="27.0" layoutY="22.0" prefHeight="31.0" prefWidth="70.0" text="Fill Color" AnchorPane.leftAnchor="27.0" />
+      <Label layoutX="27.0" layoutY="94.0" prefHeight="31.0" prefWidth="120.0" text="Outline Color" AnchorPane.leftAnchor="27.0" />
+      <CheckBox fx:id="cbSetFill" layoutX="196.0" layoutY="58.0" mnemonicParsing="false" prefHeight="21.0" prefWidth="60.0" text="Fill" AnchorPane.leftAnchor="196.0" />
+      <Spinner fx:id="spFontSize" editable="true" layoutX="22.0" layoutY="270.0" prefHeight="31.0" prefWidth="150.0" AnchorPane.leftAnchor="27.0" />
+      <Label layoutX="27.0" layoutY="169.0" prefHeight="31.0" prefWidth="120.0" text="Fonts" AnchorPane.leftAnchor="27.0" />
+      <Label layoutX="27.0" layoutY="239.0" prefHeight="31.0" prefWidth="120.0" text="Font Size" AnchorPane.leftAnchor="27.0" />
+      <Spinner fx:id="spRotation" editable="true" layoutX="197.0" layoutY="270.0" prefHeight="31.0" prefWidth="150.0" AnchorPane.leftAnchor="197.0" />
+      <Label layoutX="197.0" layoutY="239.0" prefHeight="31.0" prefWidth="120.0" text="Rotation" AnchorPane.leftAnchor="197.0" />
+      <Label layoutX="197.0" layoutY="94.0" prefHeight="31.0" prefWidth="120.0" text="Text" />
+      <TextField fx:id="textField" layoutX="196.0" layoutY="125.0" AnchorPane.leftAnchor="197.0" />
+      <ComboBox fx:id="fontDropDown" layoutX="27.0" layoutY="200.0" prefWidth="150.0" promptText="Font" />
+   </children>
+</AnchorPane>
