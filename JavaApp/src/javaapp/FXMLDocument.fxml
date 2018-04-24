@@ -6,10 +6,12 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SplitPane?>
+<<<<<<< HEAD
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+=======
+>>>>>>> origin/master
 <?import javafx.scene.layout.AnchorPane?>
-
 <AnchorPane id="AnchorPane" prefHeight="642.0" prefWidth="834.0" xmlns="http://javafx.com/javafx/9" xmlns:fx="http://javafx.com/fxml/1" fx:controller="javaapp.FXMLDocumentController">
    <children>
       <SplitPane fx:id="MainSplitPane" dividerPositions="0.04999999999999982" maxHeight="200.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -58,6 +60,7 @@
                         </AnchorPane>
                         <AnchorPane prefHeight="200.0" prefWidth="200.0">
                            <children>
+<<<<<<< HEAD
                               <SplitPane dividerPositions="0.5" layoutX="48.0" layoutY="133.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <items>
                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
@@ -81,6 +84,13 @@
                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0" />
                                 </items>
                               </SplitPane>
+=======
+                                <Button fx:id="btnBlack" layoutX="35.0" layoutY="14.0" onAction="#handleButtonAction" text="Pen" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="35.0" AnchorPane.topAnchor="14.0" />
+                              <Button fx:id="btnNo" layoutX="35.0" layoutY="100.0" mnemonicParsing="false" onAction="#RemovePen" text="Shape" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="35.0" />
+                              <Button fx:id="btnEraser" layoutX="35.0" layoutY="58.0" mnemonicParsing="false" onAction="#UseEraser" text="Eraser" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="35.0" />
+                              <Button fx:id="btnText" layoutX="91.0" layoutY="142.0" mnemonicParsing="false" onAction="#AddText" text="Text" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="35.0" />
+                              <Button fx:id="btnAny" layoutX="98.0" layoutY="184.0" mnemonicParsing="false" onAction="#TestButton" text="Testing Button" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="35.0" />
+>>>>>>> origin/master
                            </children>
                         </AnchorPane>
                     </items>
