@@ -18,6 +18,8 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 
 /**
@@ -29,18 +31,19 @@ public class FilteredImage extends Tool
     double padding = 20; // padding to add around shape for hover outline
     AnchorPane controlPane;
     BufferedImage bufferedImg;
-    Image img;
+    Image img = null;
+    Stage stage;
     
-    public FilteredImage(double x, double y, String shapeType, AnchorPane controlPane)
+    public FilteredImage(double x, double y, Stage stage, AnchorPane controlPane)
     {
         this.controlPane = controlPane;
+        this.stage = stage;
         
         this.height = 55;
         this.width = 55;
         this.canvas = new Canvas();
         this.x = x;
         this.y = y;
-        this.shapeType = shapeType.toLowerCase();
         
         canvas.setWidth(width + padding);
         canvas.setHeight(height + padding);
@@ -90,20 +93,36 @@ public class FilteredImage extends Tool
     {
         graphicsContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         
-        try
+        if(img == null)
         {
-            bufferedImg = ImageIO.read(new File("C:\\Users\\caleb\\Pictures\\test.jpg"));
-            img = SwingFXUtils.toFXImage(bufferedImg, null);
+            try
+            {
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Open");
+                File file = fileChooser.showOpenDialog(stage);
+
+                if(file != null){
+                    bufferedImg = ImageIO.read(file);
+                    img = SwingFXUtils.toFXImage(bufferedImg, null);
+
+                }
+            }
+            catch(Exception e)
+            {
+                e.printStackTrace();
+            }
+        }
+        
+        if(img != null)
+        {
             canvas.setHeight(padding + img.getHeight());
             canvas.setWidth(padding + img.getWidth());
             //graphicsContext.setStroke(lineColor);
             //graphicsContext.strokeRect(padding / 2,  padding / 2, width, height);
             graphicsContext.drawImage(img, padding/2, padding/2, img.getWidth(), img.getHeight());
         }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
+    
+        
         
         
     }
