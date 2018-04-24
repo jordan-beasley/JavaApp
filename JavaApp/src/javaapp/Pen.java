@@ -40,11 +40,10 @@ public class Pen extends Tool
                 try
                 {
                     controlPane.getChildren().removeAll(controlPane.getChildren());
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("filterUI.fxml"));
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("PenToolUI.fxml"));
                     Pane controls = loader.load();
-                    //PenToolUIController pCon = loader.getController();
-                    FilterUIController pCon = loader.getController();
-                    //pCon.SetPen(_this);
+                    PenToolUIController pCon = loader.getController();
+                    pCon.SetPen(_this);
                     controls.localToParent(controlPane.getLayoutBounds());
                     AnchorPane.setBottomAnchor(controls, 0.0);
                     AnchorPane.setTopAnchor(controls, 0.0);
@@ -104,5 +103,12 @@ public class Pen extends Tool
     {
         this.canvas.removeEventHandler(MouseEvent.MOUSE_PRESSED, initDraw);
         this.canvas.removeEventHandler(MouseEvent.MOUSE_DRAGGED, drawDrag);
+    }
+    
+    @Override
+    public void Rotate(double angle)
+    {
+        this.rotation = angle;
+        canvas.setRotate(angle);
     }
 }

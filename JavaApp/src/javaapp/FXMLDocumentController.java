@@ -64,8 +64,6 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Button btnEraser;
     @FXML
-    private ImageView imgView;
-    @FXML
     private AnchorPane controlPane;
 
     EventHandler dragEvent;
@@ -73,7 +71,9 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Button btnAny;
     @FXML
-    private AnchorPane colorPickerPane;
+    private Button btnText;
+    @FXML
+    private Button btnAny1;
     
     
     @FXML
@@ -112,19 +112,6 @@ public class FXMLDocumentController implements Initializable {
         
         anchorPane.heightProperty().addListener(new ChangeListener<Number>()
         {
-        try
-        {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("ColorPickerUI.fxml"));
-            Pane controls = loader.load();
-            //PenToolUIController pCon = loader.getController();
-
-            //ColorPicker colorPicker = new ColorPicker();
-            controlPane.getChildren().setAll(controls);
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        
-    }
             @Override
             public void changed(ObservableValue<? extends Number> ov, 
                     Number old_val, Number new_val) 
@@ -138,7 +125,6 @@ public class FXMLDocumentController implements Initializable {
     }
     
     
-    @FXML
     private void RemovePen(ActionEvent event) 
     {
         ClearTool();
@@ -165,10 +151,6 @@ public class FXMLDocumentController implements Initializable {
     
     private void PlaceShape()
     {
-        Stage stage = (Stage)anchorPane.getScene().getWindow();
-        Tool newTool = new FilteredImage(anchorPane, stage, controlPane);
-        currentTool = newTool;
-        
         //anchorPane.getChildren().add(currentTool.GetCanvas());
         
         // a click event for placing objects
@@ -245,7 +227,6 @@ public class FXMLDocumentController implements Initializable {
         this.anchorPane.addEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
     }
 
-    @FXML
     private void TestButton(ActionEvent event) 
     {
         clickEvent = new EventHandler<MouseEvent>()
@@ -269,5 +250,56 @@ public class FXMLDocumentController implements Initializable {
         };
         
         //this.anchorPane.addEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
+    }
+
+    @FXML
+    private void AddImage(ActionEvent event) 
+    {
+        Stage stage = (Stage)anchorPane.getScene().getWindow();
+        Tool newTool = new FilteredImage(anchorPane, stage, controlPane);
+        currentTool = newTool;
+    }
+
+    @FXML
+    private void ShapeButton(ActionEvent event) 
+    {
+        // a click event for placing objects
+        clickEvent = new EventHandler<MouseEvent>()
+        {
+            @Override
+            public void handle(MouseEvent event)
+            {
+                // check if the object that was clicked wasn't 
+                // the main canvas itself
+                if(event.getTarget().toString().toLowerCase().contains("canvas@"))
+                {
+                    //((Tool)event.getTarget()).SetWidth(((Tool)event.getTarget()).GetWidth() * 2);
+                }
+                else
+                {
+                    if(currentTool == null)
+                    {
+                        Random random = new Random();
+                        double rand = random.nextFloat();
+                        String shape = "square"; //(rand <= 0.33) ? "square" : (rand <= 0.66) ? "circle" : "triangle";
+                        Shape s = new Shape(event.getSceneX(), event.getSceneY(),shape,controlPane);
+                        System.out.println(event.getTarget());
+                        anchorPane.getChildren().add(s.GetCanvas());
+                        anchorPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
+                    }
+                    
+                }
+                
+            }
+        };
+        
+        this.anchorPane.addEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
+    }
+
+    @FXML
+    private void SaveImage(ActionEvent event) 
+    {
+        Stage stage = (Stage)anchorPane.getScene().getWindow();
+        FileSaver fs = new FileSaver(anchorPane, controlPane, stage);
     }
 }

@@ -85,6 +85,9 @@ public class FileSaver extends Tool
             {
                 ImageIO.write(renderedImage, "png", file);
             }
+            
+            
+            parent.getChildren().remove(canvas);
         }catch(IOException ex)
         {
             System.out.println("Image not saved");
