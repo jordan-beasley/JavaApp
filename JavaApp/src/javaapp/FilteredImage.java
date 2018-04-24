@@ -17,8 +17,14 @@ import javafx.scene.paint.Color;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.ActionEvent;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
 
@@ -33,28 +39,67 @@ public class FilteredImage extends Tool
     BufferedImage bufferedImg;
     Image img = null;
     Stage stage;
+    Pane parent;
+    ContextMenu contextMenu;
     
-    public FilteredImage(double x, double y, Stage stage, AnchorPane controlPane)
+    public FilteredImage(Pane parent, Stage stage, AnchorPane controlPane)
     {
         this.controlPane = controlPane;
         this.stage = stage;
+        this.parent = parent;
         
         this.height = 55;
         this.width = 55;
         this.canvas = new Canvas();
-        this.x = x;
-        this.y = y;
-        
-        canvas.setWidth(width + padding);
-        canvas.setHeight(height + padding);
-        canvas.setLayoutX(x - (canvas.getWidth() / 2));
-        canvas.setLayoutY(y - (canvas.getHeight() / 2));
+        this.x = parent.getWidth() / 2;
+        this.y = parent.getHeight() / 2;
         
         graphicsContext = canvas.getGraphicsContext2D();
         
         //LoadControls();
         Update();
         AddHandlers();
+        AddContextMenu();
+    }
+    
+    private void AddContextMenu()
+    {
+        contextMenu = new ContextMenu();
+        MenuItem itemToFront = new MenuItem("Move to Front");
+        MenuItem itemCrop = new MenuItem("Crop Image");
+        MenuItem itemDeleteShape = new MenuItem("Delete");
+        
+        itemToFront.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                canvas.toFront();
+            }
+        });
+        itemCrop.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                CropTool tool = new CropTool(0, 0, parent, controlPane, canvas);
+            }
+        });
+        itemDeleteShape.setOnAction(new EventHandler<ActionEvent>(){
+            @Override
+            public void handle(ActionEvent event) {
+                parent.getChildren().remove(canvas);
+                controlPane.getChildren().removeAll(controlPane.getChildren());
+                
+            }
+        });
+        
+        contextMenu.getItems().add(itemToFront);
+        contextMenu.getItems().add(itemCrop);
+        contextMenu.getItems().add(itemDeleteShape);
+        
+        canvas.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
+            @Override
+            public void handle(ContextMenuEvent event) {
+                contextMenu.show(canvas, event.getScreenX(), event.getScreenY());
+            }
+        });
     }
     
     private void LoadControls()
@@ -99,8 +144,15 @@ public class FilteredImage extends Tool
             {
                 FileChooser fileChooser = new FileChooser();
                 fileChooser.setTitle("Open");
+                fileChooser.getExtensionFilters().add(new ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif"));
                 File file = fileChooser.showOpenDialog(stage);
-
+                
+                canvas.setWidth(width + padding);
+                canvas.setHeight(height + padding);
+                canvas.setLayoutX(x - canvas.getWidth());
+                canvas.setLayoutY(y - canvas.getHeight());
+                this.parent.getChildren().add(this.canvas);
+                
                 if(file != null){
                     bufferedImg = ImageIO.read(file);
                     img = SwingFXUtils.toFXImage(bufferedImg, null);
@@ -109,7 +161,8 @@ public class FilteredImage extends Tool
             }
             catch(Exception e)
             {
-                e.printStackTrace();
+                img = null;
+                System.out.println("Couldn't add file");
             }
         }
         
@@ -117,8 +170,6 @@ public class FilteredImage extends Tool
         {
             canvas.setHeight(padding + img.getHeight());
             canvas.setWidth(padding + img.getWidth());
-            //graphicsContext.setStroke(lineColor);
-            //graphicsContext.strokeRect(padding / 2,  padding / 2, width, height);
             graphicsContext.drawImage(img, padding/2, padding/2, img.getWidth(), img.getHeight());
         }
     
@@ -140,64 +191,6 @@ public class FilteredImage extends Tool
                 
                 canvas.setLayoutX(e.getSceneX() - (canvas.getWidth() / 2));
                 canvas.setLayoutY(e.getSceneY() - (canvas.getHeight() / 2));
-            }
-        };
-        
-        resizeEvent = new EventHandler<MouseEvent>(){
-                    
-            @Override
-            public void handle(MouseEvent e)
-            {
-                /*EventHandler resizeWidth = new EventHandler<MouseEvent>(){
-                    
-                    @Override
-                    public void handle(MouseEvent e)
-                    {
-                        resizing = true;
-                    }
-                };
-                
-                EventHandler resizeHeight = new EventHandler<MouseEvent>(){
-                    
-                    @Override
-                    public void handle(MouseEvent e)
-                    {
-                        resizing = true;
-                        System.out.println("new height " + (height + (canvas.getLayoutY() - e.getSceneY())));
-                        graphicsContext.clearRect(0, 0, width, height);
-                        height = (height + (canvas.getLayoutY() - e.getSceneY()));
-                        Update();
-                    }
-                };
-                
-                EventHandler stopResize = new EventHandler<MouseEvent>(){
-                    
-                    @Override
-                    public void handle(MouseEvent e)
-                    {
-                        resizing = false;
-                    }
-                };
-                
-                //canvas.removeEventHandler(MouseEvent.MOUSE_DRAGGED, moveEvent);
-                //canvas.addEventHandler(MouseEvent.MOUSE_RELEASED, stopResize);
-                
-                if((width - e.getX()) <= 5 || (width - e.getX()) >= (width - 10))
-                {
-                    canvas.getScene().setCursor(Cursor.W_RESIZE);
-                    //canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, resizeWidth);
-                }else if((height - e.getY()) <= 5 || (height - e.getY()) >= (height - 10))
-                {
-                    canvas.getScene().setCursor(Cursor.N_RESIZE);
-                    //canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, resizeHeight);
-                }else
-                {
-                    canvas.getScene().setCursor(Cursor.DEFAULT);
-                    canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, moveEvent);
-                    canvas.addEventHandler(MouseEvent.MOUSE_ENTERED, enterEvent);
-                    canvas.addEventHandler(MouseEvent.MOUSE_MOVED, resizeEvent);
-                    canvas.addEventHandler(MouseEvent.MOUSE_EXITED, exitEvent);
-                }*/
             }
         };
         
@@ -243,7 +236,6 @@ public class FilteredImage extends Tool
         canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
         canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, moveEvent);
         canvas.addEventHandler(MouseEvent.MOUSE_ENTERED, enterEvent);
-        canvas.addEventHandler(MouseEvent.MOUSE_MOVED, resizeEvent);
         canvas.addEventHandler(MouseEvent.MOUSE_EXITED, exitEvent);
     }
     

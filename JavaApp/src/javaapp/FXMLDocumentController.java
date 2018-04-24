@@ -151,6 +151,12 @@ public class FXMLDocumentController implements Initializable {
     
     private void PlaceShape()
     {
+        Stage stage = (Stage)anchorPane.getScene().getWindow();
+        Tool newTool = new FilteredImage(anchorPane, stage, controlPane);
+        currentTool = newTool;
+        
+        //anchorPane.getChildren().add(currentTool.GetCanvas());
+        
         // a click event for placing objects
         clickEvent = new EventHandler<MouseEvent>()
         {
@@ -170,12 +176,6 @@ public class FXMLDocumentController implements Initializable {
                         Random random = new Random();
                         double rand = random.nextFloat();
                         String shape = "square"; //(rand <= 0.33) ? "square" : (rand <= 0.66) ? "circle" : "triangle";
-                        Stage stage = (Stage)anchorPane.getScene().getWindow();
-                        Tool newTool = new FilteredImage(event.getX(), event.getY(), stage, controlPane); //new Shape(event.getX(), event.getY(), shape, controlPane);
-                        String shape = "square";
-                        //Tool newTool = new Shape(event.getX(), event.getY(), shape, controlPane);
-                        //currentTool = newTool;
-                        anchorPane.getChildren().add(currentTool.GetCanvas());
                         System.out.println(event.getTarget());
                         anchorPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
                     }
@@ -185,7 +185,7 @@ public class FXMLDocumentController implements Initializable {
             }
         };
         
-        this.anchorPane.addEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
+        //this.anchorPane.addEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
     }
 
     private void CustomShape(ActionEvent event) 
@@ -244,9 +244,9 @@ public class FXMLDocumentController implements Initializable {
                     ClearTool();
                 }
                 
-                Tool newTool = new SelectionTool(event.getSceneX(), event.getSceneY(), anchorPane, controlPane);
-                currentTool = newTool;
-                anchorPane.getChildren().add(currentTool.GetCanvas());
+                //Tool newTool = new SelectionTool(event.getSceneX(), event.getSceneY(), anchorPane, controlPane);
+                //currentTool = newTool;
+                //anchorPane.getChildren().add(currentTool.GetCanvas());
                 anchorPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
                 
                 // remove this handler after the object has been placed
@@ -254,6 +254,6 @@ public class FXMLDocumentController implements Initializable {
             }
         };
         
-        this.anchorPane.addEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
+        //this.anchorPane.addEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
     }
 }
