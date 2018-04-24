@@ -52,7 +52,6 @@ public class Tool
     public void NoFill(){}
     public void Fill(){}
     public boolean HasFill(){ return fillShape; }
-    
     public void SetText(String text){}
     public void SetFontFamily(String family){}
     public void SetFontSize(double fontSize){}

@@ -41,7 +41,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 public class FXMLDocumentController implements Initializable {
@@ -62,6 +61,8 @@ public class FXMLDocumentController implements Initializable {
     private Button btnNo;
     @FXML
     private Button btnEraser;
+    @FXML
+    private ImageView imgView;
     @FXML
     private AnchorPane controlPane;
     @FXML
@@ -85,6 +86,10 @@ public class FXMLDocumentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) 
     {
+        //filter f = new filter();
+        //image = SwingFXUtils.toFXImage(f.getImage(), null);
+        //imgView.setImage(image);
+        //GraphicsContext gc = drawCanvas.getGraphicsContext2D();
         // add a black box around the border of the main canvas
         /*GraphicsContext gc = drawCanvas.getGraphicsContext2D();
         gc.setLineWidth(5);
@@ -162,9 +167,14 @@ public class FXMLDocumentController implements Initializable {
                 {
                     if(currentTool == null)
                     {
+                        Random random = new Random();
+                        double rand = random.nextFloat();
+                        String shape = "square"; //(rand <= 0.33) ? "square" : (rand <= 0.66) ? "circle" : "triangle";
+                        Stage stage = (Stage)anchorPane.getScene().getWindow();
+                        Tool newTool = new FilteredImage(event.getX(), event.getY(), stage, controlPane); //new Shape(event.getX(), event.getY(), shape, controlPane);
                         String shape = "square";
-                        Tool newTool = new Shape(event.getX(), event.getY(), shape, controlPane);
-                        currentTool = newTool;
+                        //Tool newTool = new Shape(event.getX(), event.getY(), shape, controlPane);
+                        //currentTool = newTool;
                         anchorPane.getChildren().add(currentTool.GetCanvas());
                         System.out.println(event.getTarget());
                         anchorPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
