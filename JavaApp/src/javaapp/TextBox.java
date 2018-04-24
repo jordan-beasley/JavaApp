@@ -1,62 +1,46 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package javaapp;
 
-import java.io.File;
+import java.util.List;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
-import javafx.scene.input.ContextMenuEvent;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
-import javafx.stage.Stage;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
-
-/**
- *
- * @author caleb
- */
-public class FilteredImage extends Tool 
+public class TextBox extends Tool
 {
     double padding = 20; // padding to add around shape for hover outline
     AnchorPane controlPane;
-    BufferedImage bufferedImg;
-    Image img = null;
-    Stage stage;
-    Pane parent;
     ContextMenu contextMenu;
+    double fontSize = 50;
     
-    public FilteredImage(Pane parent, Stage stage, AnchorPane controlPane)
+    public TextBox(double x, double y, AnchorPane controlPane)
     {
         this.controlPane = controlPane;
-        this.stage = stage;
-        this.parent = parent;
         
         this.height = 55;
         this.width = 55;
         this.canvas = new Canvas();
-        this.x = parent.getWidth() / 2;
-        this.y = parent.getHeight() / 2;
+        this.x = x;
+        this.y = y;
+        
+        canvas.setWidth(width + padding);
+        canvas.setHeight(height + padding);
+        canvas.setLayoutX(x - (canvas.getWidth() / 2));
+        canvas.setLayoutY(y - (canvas.getHeight() / 2));
         
         graphicsContext = canvas.getGraphicsContext2D();
         
-        //LoadControls();
+        LoadControls();
         Update();
         AddHandlers();
         AddContextMenu();
@@ -66,7 +50,6 @@ public class FilteredImage extends Tool
     {
         contextMenu = new ContextMenu();
         MenuItem itemToFront = new MenuItem("Move to Front");
-        MenuItem itemCrop = new MenuItem("Crop Image");
         MenuItem itemDeleteShape = new MenuItem("Delete");
         
         itemToFront.setOnAction(new EventHandler<ActionEvent>() {
@@ -75,15 +58,11 @@ public class FilteredImage extends Tool
                 canvas.toFront();
             }
         });
-        itemCrop.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                CropTool tool = new CropTool(0, 0, parent, controlPane, canvas);
-            }
-        });
+        
         itemDeleteShape.setOnAction(new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent event) {
+                Pane parent = (Pane) canvas.getParent();
                 parent.getChildren().remove(canvas);
                 controlPane.getChildren().removeAll(controlPane.getChildren());
                 
@@ -91,7 +70,6 @@ public class FilteredImage extends Tool
         });
         
         contextMenu.getItems().add(itemToFront);
-        contextMenu.getItems().add(itemCrop);
         contextMenu.getItems().add(itemDeleteShape);
         
         canvas.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
@@ -111,10 +89,10 @@ public class FilteredImage extends Tool
                 try
                 {
                     controlPane.getChildren().removeAll(controlPane.getChildren());
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("ShapeToolUI.fxml"));
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("TextBoxToolUI.fxml"));
                     Pane controls = loader.load();
-                    ShapeToolUIController sCon = loader.getController();
-                    sCon.SetShape(_this);
+                    TextBoxToolUIController controller = loader.getController();
+                    controller.SetTextBox(_this);
                     controls.localToParent(controlPane.getLayoutBounds());
                     AnchorPane.setBottomAnchor(controls, 0.0);
                     AnchorPane.setTopAnchor(controls, 0.0);
@@ -137,44 +115,27 @@ public class FilteredImage extends Tool
     public void Update()
     {
         graphicsContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        graphicsContext.setLineWidth(1);
+        graphicsContext.setFill(fillColor);
+        graphicsContext.setStroke(lineColor);
+        graphicsContext.setFont(font);
         
-        if(img == null)
+        
+        Text textString = new Text(text);
+        font = new Font(font.getFamily(), fontSize);
+        textString.setFont(font);
+        double fontWidth = textString.layoutBoundsProperty().get().getWidth();
+        double fontHeight = textString.layoutBoundsProperty().get().getHeight();
+        
+        canvas.setWidth(fontWidth + padding);
+        canvas.setHeight(fontHeight + padding);
+        
+        graphicsContext.strokeText(text, padding / 2,  fontHeight - (padding / 2));
+        
+        if(fillShape)
         {
-            try
-            {
-                FileChooser fileChooser = new FileChooser();
-                fileChooser.setTitle("Open");
-                fileChooser.getExtensionFilters().add(new ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif"));
-                File file = fileChooser.showOpenDialog(stage);
-                
-                canvas.setWidth(width + padding);
-                canvas.setHeight(height + padding);
-                canvas.setLayoutX(x - canvas.getWidth());
-                canvas.setLayoutY(y - canvas.getHeight());
-                this.parent.getChildren().add(this.canvas);
-                
-                if(file != null){
-                    bufferedImg = ImageIO.read(file);
-                    img = SwingFXUtils.toFXImage(bufferedImg, null);
-
-                }
-            }
-            catch(Exception e)
-            {
-                img = null;
-                System.out.println("Couldn't add file");
-            }
+            graphicsContext.fillText(text, padding / 2,  fontHeight - (padding / 2));
         }
-        
-        if(img != null)
-        {
-            canvas.setHeight(padding + img.getHeight());
-            canvas.setWidth(padding + img.getWidth());
-            graphicsContext.drawImage(img, padding/2, padding/2, img.getWidth(), img.getHeight());
-        }
-    
-        
-        
         
     }
     
@@ -186,9 +147,6 @@ public class FilteredImage extends Tool
             @Override
             public void handle(MouseEvent e)
             {
-                if(resizing)
-                    return;
-                
                 canvas.setLayoutX(e.getSceneX() - (canvas.getWidth() / 2));
                 canvas.setLayoutY(e.getSceneY() - (canvas.getHeight() / 2));
             }
@@ -199,6 +157,7 @@ public class FilteredImage extends Tool
             @Override
             public void handle(MouseEvent e)
             {
+                // draw a border around tool area
                 graphicsContext.setLineWidth(1);
                 graphicsContext.setStroke(boxBorderColor);
                 graphicsContext.setLineDashes(new double[]{8});
@@ -224,12 +183,7 @@ public class FilteredImage extends Tool
             @Override
             public void handle(MouseEvent e)
             {
-                //LoadControls();
-                graphicsContext.setLineWidth(1);
-                graphicsContext.setStroke(boxBorderColor);
-                graphicsContext.setLineDashes(new double[]{8});
-                graphicsContext.strokeRect(0, 0, canvas.getWidth(), canvas.getHeight());
-                graphicsContext.setLineDashes(new double[]{0});
+                LoadControls();
             }
         };
         
@@ -264,19 +218,18 @@ public class FilteredImage extends Tool
     }
     
     @Override
-    public void SetHeight(double height)
+    public void SetFontSize(double fontSize)
     {
-        this.height = height;
-        canvas.setHeight(height + padding);
-        Update();
-    }
-    
-    @Override
-    public void SetWidth(double width)
-    {
-        this.width = width;
-        canvas.setWidth(width + padding);
-        Update();
+        try
+        {
+            this.fontSize = fontSize;
+            font = new Font(font.getFamily(), this.fontSize);
+            Update();
+        }catch(Exception e)
+        {
+            System.out.println("Font too large");
+        }
+        
     }
     
     @Override
@@ -296,6 +249,45 @@ public class FilteredImage extends Tool
             return;
         
         fillShape = true;
+        Update();
+    }
+    
+    @Override
+    public void Rotate(double angle)
+    {
+        this.rotation = angle;
+        canvas.setRotate(angle);
+    }
+    
+    @Override
+    public void SetText(String text)
+    {
+        this.text = text.trim();
+        Update();
+    }
+    
+    @Override
+    public double GetWidth()
+    {
+        return this.fontSize * text.length();
+    }
+    
+    @Override
+    public double GetHeight()
+    {
+        return this.fontSize;
+    }
+    
+    @Override
+    public double GetFontSize()
+    { 
+        return this.fontSize;
+    }
+    
+    @Override
+    public void SetFontFamily(String family)
+    {
+        this.font = new Font(family, this.fontSize);
         Update();
     }
 }

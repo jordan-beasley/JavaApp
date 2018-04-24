@@ -1,51 +1,61 @@
 package javaapp;
 
+import com.sun.scenario.effect.ImageData;
+import java.awt.image.RenderedImage;
+import java.io.File;
+import java.io.IOException;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
-import javafx.scene.Parent;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javax.imageio.ImageIO;
 
-
-public class Shape extends Tool
+public class CropTool extends Tool
 {
     double padding = 20; // padding to add around shape for hover outline
     AnchorPane controlPane;
     ContextMenu contextMenu;
+    Pane parent;
+    Canvas imgCanvas;
+    EventHandler dragEvent;
+    EventHandler initEvent;
+    Image img;
     
-    double startingX = 0;
-    double startingY = 0;
+    boolean placed = false;
+    PixelReader pr;
+    WritableImage writableImage;
     
-    public Shape(double x, double y, String shapeType, AnchorPane controlPane)
+    public CropTool(double x, double y, Pane parent, AnchorPane controlPane, Canvas imgCanvas)
     {
         this.controlPane = controlPane;
+        this.parent = parent;
+        this.imgCanvas = imgCanvas;
         
-        this.height = 55;
-        this.width = 55;
+        this.height = 1;
+        this.width = 1;
         this.canvas = new Canvas();
         this.x = x;
         this.y = y;
-        this.shapeType = shapeType.toLowerCase();
         
-        canvas.setWidth(width + padding);
-        canvas.setHeight(height + padding);
-        canvas.setLayoutX(x - (canvas.getWidth() / 2));
-        canvas.setLayoutY(y - (canvas.getHeight() / 2));
         
         graphicsContext = canvas.getGraphicsContext2D();
         
-        LoadControls();
-        Update();
         AddHandlers();
         AddContextMenu();
     }
@@ -53,15 +63,8 @@ public class Shape extends Tool
     private void AddContextMenu()
     {
         contextMenu = new ContextMenu();
-        MenuItem itemToFront = new MenuItem("Move to Front");
         MenuItem itemDeleteShape = new MenuItem("Delete");
         
-        itemToFront.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                canvas.toFront();
-            }
-        });
         itemDeleteShape.setOnAction(new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent event) {
@@ -72,7 +75,6 @@ public class Shape extends Tool
             }
         });
         
-        contextMenu.getItems().add(itemToFront);
         contextMenu.getItems().add(itemDeleteShape);
         
         canvas.setOnContextMenuRequested(new EventHandler<ContextMenuEvent>() {
@@ -117,52 +119,27 @@ public class Shape extends Tool
     @Override
     public void Update()
     {
-        graphicsContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        graphicsContext.setLineWidth(1);
-        graphicsContext.setFill(fillColor);
-        graphicsContext.setStroke(lineColor);
-        
-        if("square".equals(shapeType))
-        {
-            
-            graphicsContext.strokeRect(padding / 2,  padding / 2, width, height);
-            
-            if(fillShape)
-            {
-                graphicsContext.fillRect(padding / 2,  padding / 2, width, height);
-            }
-        }
-        else if("circle".equals(shapeType))
-        {
-            graphicsContext.strokeOval(padding / 2,  padding / 2, width, height);
-            
-            if(fillShape)
-            {
-                graphicsContext.fillOval(padding / 2,  padding / 2, width, height);
-            }
-        }
-        else if("triangle".equals(shapeType))
-        {
-            // draw inside of triangle
-            graphicsContext.beginPath();
-            graphicsContext.moveTo(padding / 2, height + (padding / 2));
-            graphicsContext.lineTo((width / 2) + (padding / 2), padding / 2);
-            graphicsContext.lineTo(width + (padding / 2), height + (padding / 2));
-            graphicsContext.closePath();
-            
-            if(fillShape)
-            {
-                graphicsContext.fill();
-            }
-            
-            // draw outine of shape
-            graphicsContext.stroke();
-        }
-        
+        graphicsContext.clearRect(0, 0, width, height);
+        graphicsContext.drawImage(img, padding/2, padding/2, img.getWidth(), img.getHeight());
     }
     
     private void AddHandlers()
     {
+        dragEvent = new EventHandler<MouseEvent>(){
+                    
+            @Override
+            public void handle(MouseEvent e)
+            {
+                width = e.getSceneX() - canvas.getLayoutX();
+                height = e.getSceneY() - canvas.getLayoutY();
+                
+                canvas.setWidth(width);
+                canvas.setHeight(height);
+                graphicsContext.clearRect(0, 0, width, height);
+                graphicsContext.strokeRect(0,  0, width, height);
+                graphicsContext.fillRect(0,  0, width, height);
+            }
+        };
         
         moveEvent = new EventHandler<MouseEvent>(){
                     
@@ -174,8 +151,6 @@ public class Shape extends Tool
                 
                 canvas.setLayoutX(e.getSceneX() - (canvas.getWidth() / 2));
                 canvas.setLayoutY(e.getSceneY() - (canvas.getHeight() / 2));
-                
-                
             }
         };
         
@@ -213,65 +188,66 @@ public class Shape extends Tool
             }
         };
         
-        canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
-        canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, moveEvent);
-        canvas.addEventHandler(MouseEvent.MOUSE_ENTERED, enterEvent);
-        canvas.addEventHandler(MouseEvent.MOUSE_EXITED, exitEvent);
-    }
-    
-    @Override
-    public void SetFillColor(String hex) 
-    {
-        fillColor = Color.web(hex);
-        Update();
-    }
-    
-    @Override
-    public void SetOutlineColor(String hex) 
-    {
-        lineColor = Color.web(hex);
-        Update();
-    }
-    
-    @Override
-    public void SetHeight(double height)
-    {
-        this.height = height;
-        canvas.setHeight(height + padding);
-        Update();
-    }
-    
-    @Override
-    public void SetWidth(double width)
-    {
-        this.width = width;
-        canvas.setWidth(width + padding);
-        Update();
-    }
-    
-    @Override
-    public void NoFill()
-    {
-        if(!fillShape)
-            return;
+        initEvent = new EventHandler<MouseEvent>()
+        {
+                    
+            @Override
+            public void handle(MouseEvent e)
+            {
+                
+                if(placed == false)
+                {
+                    graphicsContext.setLineWidth(1);
+                    lineColor = Color.web("005dff");
+                    fillColor = Color.web("619aff", 0.5);
+                    graphicsContext.setFill(fillColor);
+                    graphicsContext.setStroke(lineColor);
+                    canvas.setLayoutX(e.getSceneX());
+                    canvas.setLayoutY(e.getSceneY());
+                    canvas.setWidth(width);
+                    canvas.setHeight(height);
+                    parent.getChildren().add(canvas);
+                    parent.addEventHandler(MouseEvent.MOUSE_MOVED, dragEvent);
+                    placed = true;
+                }else
+                {
+                    graphicsContext.clearRect(0, 0, width, height);
+                    
+                    
+                    SnapshotParameters sp = new SnapshotParameters();
+                    
+                    Rectangle2D viewPort = new Rectangle2D((int)canvas.getLayoutX(), (int)canvas.getLayoutY(),
+                            (int)canvas.getWidth(),
+                            (int)canvas.getHeight());
+                    sp.setViewport(viewPort);
+                    sp.setFill(Color.TRANSPARENT);
+                    writableImage = new WritableImage(
+                            (int)imgCanvas.getWidth(),
+                            (int)imgCanvas.getHeight());
+                    imgCanvas.snapshot(sp, writableImage);
+                    pr = writableImage.getPixelReader();
+                    
+                    img = (Image)writableImage;
+                    graphicsContext.drawImage(img, padding/2, padding/2, img.getWidth(), img.getHeight());
+                    
+                    parent.removeEventHandler(MouseEvent.MOUSE_MOVED, dragEvent);
+                    canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
+                    canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, moveEvent);
+                    canvas.addEventHandler(MouseEvent.MOUSE_ENTERED, enterEvent);
+                    canvas.addEventHandler(MouseEvent.MOUSE_EXITED, exitEvent);
+                    parent.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
+                }
+                
+            }
+        };
         
-        fillShape = false;
-        Update();
+        parent.addEventHandler(MouseEvent.MOUSE_CLICKED, initEvent);
     }
     
     @Override
-    public void Fill()
+    public void RemoveHandlers() 
     {
-        if(fillShape)
-            return;
-        
-        fillShape = true;
-        Update();
-    }
-    
-    public void Rotate(double angle)
-    {
-        this.rotation = angle;
-        canvas.setRotate(angle);
+        parent.removeEventHandler(MouseEvent.MOUSE_CLICKED, this.clickEvent);
+        parent.removeEventHandler(MouseEvent.MOUSE_MOVED, this.moveEvent);
     }
 }
