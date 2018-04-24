@@ -172,10 +172,14 @@ public class Shape extends Tool
                 if(resizing)
                     return;
                 
-                canvas.setLayoutX(e.getSceneX() - (canvas.getWidth() / 2));
-                canvas.setLayoutY(e.getSceneY() - (canvas.getHeight() / 2));
+                x = e.getSceneX();
+                y = e.getSceneY();
+                canvas.setLayoutX(x);
+                canvas.setLayoutY(y);
                 
-                
+                System.out.println("scene: " + canvas.getLayoutX() + ", " + canvas.getLayoutY());
+                System.out.println("scene: " + e.getSceneX() + ", " + e.getSceneY());
+                System.out.println("e: " + e.getX() + ", " + e.getY());
             }
         };
         

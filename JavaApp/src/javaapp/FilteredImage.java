@@ -21,14 +21,10 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
-<<<<<<< HEAD
-import javafx.stage.FileChooser;
-=======
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
->>>>>>> origin/master
 import javafx.stage.Stage;
 
 
@@ -46,11 +42,7 @@ public class FilteredImage extends Tool
     Pane parent;
     ContextMenu contextMenu;
     
-<<<<<<< HEAD
-    public FilteredImage(double x, double y, AnchorPane parent, AnchorPane controlPane)
-=======
     public FilteredImage(Pane parent, Stage stage, AnchorPane controlPane)
->>>>>>> origin/master
     {
         this.controlPane = controlPane;
         this.stage = stage;
@@ -65,10 +57,6 @@ public class FilteredImage extends Tool
         graphicsContext = canvas.getGraphicsContext2D();
         
         //LoadControls();
-<<<<<<< HEAD
-        //Update();
-        //AddHandlers();
-=======
         Update();
         AddHandlers();
         AddContextMenu();
@@ -112,7 +100,6 @@ public class FilteredImage extends Tool
                 contextMenu.show(canvas, event.getScreenX(), event.getScreenY());
             }
         });
->>>>>>> origin/master
     }
     
     private void LoadControls()

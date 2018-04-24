@@ -44,16 +44,14 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-<<<<<<< HEAD
 import javafx.stage.FileChooser;
-=======
->>>>>>> origin/master
 import javafx.stage.Stage;
 
 public class FXMLDocumentController implements Initializable {
     
     
     Image image;
+    @FXML
     private Canvas drawCanvas;
     
     @FXML
@@ -66,21 +64,26 @@ public class FXMLDocumentController implements Initializable {
     EventHandler dragEvent;
     EventHandler clickEvent;
     @FXML
-    private Button btnAny;
-    @FXML
     private AnchorPane colorPickerPane;
     @FXML
     private AnchorPane toolControlPane;
     @FXML
     private SplitPane MainSplitPane;
-    
-    
-    private void handleButtonAction(ActionEvent event) 
-    {
-        // remove the current tool and set a new tool
-        ClearTool();
-        currentTool = new Pen(drawCanvas, controlPane);
-    }
+    @FXML
+    private AnchorPane childPane;
+    @FXML
+    private Button Dropper;
+    @FXML
+    private Button EraserButton;
+    @FXML
+    private Button PenButton;
+    @FXML
+    private Button FilterButton;
+    @FXML
+    private Button ShapeButton;
+    @FXML
+    private Button TextButton;
+   
     
     
     @Override
@@ -96,6 +99,17 @@ public class FXMLDocumentController implements Initializable {
         gc.setStroke(Color.BLACK);
         gc.strokeRect(0, 0, drawCanvas.getWidth(), drawCanvas.getHeight());
         */
+        try
+        {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("ColorPickerUI.fxml"));
+            Pane controls = loader.load();
+            //PenToolUIController pCon = loader.getController();
+
+            //ColorPicker colorPicker = new ColorPicker();
+            colorPickerPane.getChildren().setAll(controls);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         
         anchorPane.widthProperty().addListener(new ChangeListener<Number>()
         {
@@ -110,24 +124,6 @@ public class FXMLDocumentController implements Initializable {
         
         anchorPane.heightProperty().addListener(new ChangeListener<Number>()
         {
-        try
-        {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("ColorPickerUI.fxml"));
-            Pane controls = loader.load();
-            //PenToolUIController pCon = loader.getController();
-
-            //ColorPicker colorPicker = new ColorPicker();
-            colorPickerPane.getChildren().setAll(controls);
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-        
-        
-        
-    }
-<<<<<<< HEAD
-
-=======
             @Override
             public void changed(ObservableValue<? extends Number> ov, 
                     Number old_val, Number new_val) 
@@ -141,8 +137,6 @@ public class FXMLDocumentController implements Initializable {
     }
     
     
-    @FXML
->>>>>>> origin/master
     private void RemovePen(ActionEvent event) 
     {
         ClearTool();
@@ -190,15 +184,6 @@ public class FXMLDocumentController implements Initializable {
                 {
                     if(currentTool == null)
                     {
-                        Random random = new Random();
-                        double rand = random.nextFloat();
-                        String shape = "square"; //(rand <= 0.33) ? "square" : (rand <= 0.66) ? "circle" : "triangle";
-<<<<<<< HEAD
-                        Tool newTool = new FilteredImage(anchorPane.getWidth() / 2, anchorPane.getHeight() / 2, anchorPane, controlPane); //new Shape(event.getX(), event.getY(), shape, controlPane);
-                        currentTool = newTool;
-                        anchorPane.getChildren().add(currentTool.GetCanvas());
-=======
->>>>>>> origin/master
                         System.out.println(event.getTarget());
                         anchorPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
                     }
@@ -227,7 +212,6 @@ public class FXMLDocumentController implements Initializable {
         currentTool =  new Dropper(anchorPane, controlPane, stage);
     }
 
-    @FXML
     private void AddText(ActionEvent event) 
     {
         clickEvent = new EventHandler<MouseEvent>()
@@ -254,7 +238,6 @@ public class FXMLDocumentController implements Initializable {
         this.anchorPane.addEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
     }
 
-    @FXML
     private void TestButton(ActionEvent event) 
     {
         clickEvent = new EventHandler<MouseEvent>()
@@ -276,16 +259,6 @@ public class FXMLDocumentController implements Initializable {
                 // anchorPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
             }
         };
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open Resource File");
-        Stage stage = (Stage)anchorPane.getScene().getWindow();
-        fileChooser.showOpenDialog(stage);
-        
-        Tool newTool = new FilteredImage(anchorPane.getWidth() / 2, anchorPane.getHeight() / 2, anchorPane, controlPane); //new Shape(event.getX(), event.getY(), shape, controlPane);
-        //currentTool = newTool;
-        
-        //this.anchorPane.addEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
-        //this.anchorPane.addEventHandler(MouseEvent.MOUSE_DRAGGED, dragEvent);
     }
 
     @FXML
@@ -333,12 +306,68 @@ public class FXMLDocumentController implements Initializable {
             }
         };
         
-<<<<<<< HEAD
         this.anchorPane.addEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
-        //this.anchorPane.addEventHandler(MouseEvent.MOUSE_DRAGGED, dragEvent);
-=======
-        //this.anchorPane.addEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
->>>>>>> origin/master
+    }
+
+    @FXML
+    private void UsePen(ActionEvent event) 
+    {
+        ClearTool();
+        currentTool = new Pen(drawCanvas, controlPane);
+    }
+
+    @FXML
+    private void UseShape(ActionEvent event) 
+    {
+        EventHandler clickEvent = new EventHandler<MouseEvent>()
+        {
+            @Override
+            public void handle(MouseEvent event)
+            {
+                // check if the object that was clicked wasn't 
+                // the main canvas itself
+                if(event.getTarget().toString().toLowerCase().contains("canvas@"))
+                {
+                    //((Tool)event.getTarget()).SetWidth(((Tool)event.getTarget()).GetWidth() * 2);
+                }
+                else
+                {
+                    if(currentTool == null)
+                    {
+                        Random random = new Random();
+                        double rand = random.nextFloat();
+                        String shape = "square"; //(rand <= 0.33) ? "square" : (rand <= 0.66) ? "circle" : "triangle";
+                        Tool newTool = new Shape(event.getX(), event.getY(), shape, toolControlPane);
+                        currentTool = newTool;
+                        anchorPane.getChildren().add(currentTool.GetCanvas());
+                        anchorPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
+                    }
+                    
+                }
+                
+                // remove this handler after the object has been placed
+                // anchorPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
+            }
+        };
+        
+        // a click event for dragging to clear click event
+        EventHandler dragEvent = new EventHandler<MouseEvent>()
+        {
+            @Override
+            public void handle(MouseEvent event)
+            {
+                //currentTool = null;
+                anchorPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
+            }
+        };
+        
+        this.anchorPane.addEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
+    }
+
+    @FXML
+    private void UseTextBox(ActionEvent event) 
+    {
+        
     }
 
 }
