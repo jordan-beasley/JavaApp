@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/9" fx:controller="javaapp.FilterUIController">
+   <children>
+      <Slider fx:id="RedSlider" layoutX="22.0" layoutY="26.0" showTickLabels="true" showTickMarks="true" value="100.0" />
+      <Slider fx:id="GreenSlider" layoutX="22.0" layoutY="63.0" showTickLabels="true" showTickMarks="true" value="100.0" />
+      <Slider fx:id="BlueSlider" layoutX="22.0" layoutY="97.0" showTickLabels="true" showTickMarks="true" value="100.0" />
+   </children>
+</AnchorPane>

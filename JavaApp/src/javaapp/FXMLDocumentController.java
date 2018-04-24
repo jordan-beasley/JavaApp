@@ -14,6 +14,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -32,6 +33,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Slider;
 import javafx.scene.effect.Blend;
 import javafx.scene.image.PixelReader;
@@ -65,13 +67,13 @@ public class FXMLDocumentController implements Initializable {
     private ImageView imgView;
     @FXML
     private AnchorPane controlPane;
-    @FXML
-    private Button btnText;
-    
+
     EventHandler dragEvent;
     EventHandler clickEvent;
     @FXML
     private Button btnAny;
+    @FXML
+    private AnchorPane colorPickerPane;
     
     
     @FXML
@@ -110,7 +112,19 @@ public class FXMLDocumentController implements Initializable {
         
         anchorPane.heightProperty().addListener(new ChangeListener<Number>()
         {
+        try
+        {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("ColorPickerUI.fxml"));
+            Pane controls = loader.load();
+            //PenToolUIController pCon = loader.getController();
 
+            //ColorPicker colorPicker = new ColorPicker();
+            controlPane.getChildren().setAll(controls);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        
+    }
             @Override
             public void changed(ObservableValue<? extends Number> ov, 
                     Number old_val, Number new_val) 
