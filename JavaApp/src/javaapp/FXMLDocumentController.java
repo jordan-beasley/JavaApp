@@ -27,6 +27,7 @@ import org.jcodec.common.model.Picture;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
@@ -40,6 +41,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 public class FXMLDocumentController implements Initializable {
     
@@ -69,7 +72,6 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Button btnAny;
     
-    //Dictionary elements = new Dictionary<>();
     
     @FXML
     private void handleButtonAction(ActionEvent event) 
@@ -140,16 +142,6 @@ public class FXMLDocumentController implements Initializable {
             currentTool.RemoveHandlers();
             currentTool = null;
         }
-        
-        /*if(dragEvent != null)
-        {
-            anchorPane.removeEventHandler(MouseEvent.MOUSE_DRAGGED, dragEvent);
-        }
-        
-        if(clickEvent != null)
-        {
-            anchorPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
-        }*/
     }
     
     private void PlaceShape()
@@ -170,9 +162,7 @@ public class FXMLDocumentController implements Initializable {
                 {
                     if(currentTool == null)
                     {
-                        Random random = new Random();
-                        double rand = random.nextFloat();
-                        String shape = "square"; //(rand <= 0.33) ? "square" : (rand <= 0.66) ? "circle" : "triangle";
+                        String shape = "square";
                         Tool newTool = new Shape(event.getX(), event.getY(), shape, controlPane);
                         currentTool = newTool;
                         anchorPane.getChildren().add(currentTool.GetCanvas());
@@ -182,24 +172,10 @@ public class FXMLDocumentController implements Initializable {
                     
                 }
                 
-                // remove this handler after the object has been placed
-                // anchorPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
-            }
-        };
-        
-        // a click event for dragging to clear click event
-        dragEvent = new EventHandler<MouseEvent>()
-        {
-            @Override
-            public void handle(MouseEvent event)
-            {
-                //currentTool = null;
-                anchorPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
             }
         };
         
         this.anchorPane.addEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
-        //this.anchorPane.addEventHandler(MouseEvent.MOUSE_DRAGGED, dragEvent);
     }
 
     private void CustomShape(ActionEvent event) 
@@ -214,43 +190,8 @@ public class FXMLDocumentController implements Initializable {
         // take a snap shot of the entire canvas
         // use scene/event (x,y) to get row and height
         // get pixel value from writable image of canvas
-        
-        /*EventHandler moveEvent = new EventHandler<MouseEvent>()
-        {
-            @Override
-            public void handle(MouseEvent event)
-            { 
-                if(event.getTarget().toString().toLowerCase().contains("canvas@") ||
-                        event.getTarget().toString().toLowerCase().contains("canvas["))
-                {
-                    // place a canvas over the current objects on the drawCanvas
-                    // take a snapshot of that canvas to get a writable image, then remove it from the view
-                    // use event x and y to get pixel values from the writable image of that canvas
-                    Canvas temp = ((Canvas)event.getTarget());
-                    WritableImage writableImage = new WritableImage((int)temp.getWidth(), (int)temp.getHeight());
-                    ((Canvas)event.getTarget()).snapshot(null, writableImage);
-                    PixelReader pr = writableImage.getPixelReader();
-                    System.out.println(pr.getColor(0, 0));
-                }
-                
-                System.out.println(event.getTarget().toString());
-            }
-        };
-        
-        EventHandler clickEvent = new EventHandler<MouseEvent>()
-        {
-            @Override
-            public void handle(MouseEvent event)
-            {
-                
-                // remove this handler after the object has been placed
-                anchorPane.removeEventHandler(MouseEvent.MOUSE_MOVED, moveEvent);
-                anchorPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
-            }
-        };
-        
-        this.anchorPane.addEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
-        this.anchorPane.addEventHandler(MouseEvent.MOUSE_MOVED, moveEvent);*/
+        Stage stage = (Stage)anchorPane.getScene().getWindow();
+        currentTool =  new Dropper(anchorPane, controlPane, stage);
     }
 
     @FXML
@@ -260,18 +201,7 @@ public class FXMLDocumentController implements Initializable {
         {
             @Override
             public void handle(MouseEvent event)
-            {
-                // check if the object that was clicked wasn't 
-                // the main canvas itself
-                /*if(event.getTarget().toString().toLowerCase().contains("canvas@"))
-                {
-                    //((Tool)event.getTarget()).SetWidth(((Tool)event.getTarget()).GetWidth() * 2);
-                }
-                else
-                {
-                    
-                }*/
-                
+            {   
                 if(currentTool != null)
                 {
                     ClearTool();
@@ -287,19 +217,8 @@ public class FXMLDocumentController implements Initializable {
             }
         };
         
-        // a click event for dragging to clear click event
-        dragEvent = new EventHandler<MouseEvent>()
-        {
-            @Override
-            public void handle(MouseEvent event)
-            {
-                currentTool = null;
-                anchorPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
-            }
-        };
         
         this.anchorPane.addEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
-        //this.anchorPane.addEventHandler(MouseEvent.MOUSE_DRAGGED, dragEvent);
     }
 
     @FXML
@@ -310,17 +229,6 @@ public class FXMLDocumentController implements Initializable {
             @Override
             public void handle(MouseEvent event)
             {
-                // check if the object that was clicked wasn't 
-                // the main canvas itself
-                /*if(event.getTarget().toString().toLowerCase().contains("canvas@"))
-                {
-                    //((Tool)event.getTarget()).SetWidth(((Tool)event.getTarget()).GetWidth() * 2);
-                }
-                else
-                {
-                    
-                }*/
-                
                 if(currentTool != null)
                 {
                     ClearTool();
@@ -336,18 +244,6 @@ public class FXMLDocumentController implements Initializable {
             }
         };
         
-        // a click event for dragging to clear click event
-        dragEvent = new EventHandler<MouseEvent>()
-        {
-            @Override
-            public void handle(MouseEvent event)
-            {
-                currentTool = null;
-                anchorPane.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
-            }
-        };
-        
         this.anchorPane.addEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
-        //this.anchorPane.addEventHandler(MouseEvent.MOUSE_DRAGGED, dragEvent);
     }
 }

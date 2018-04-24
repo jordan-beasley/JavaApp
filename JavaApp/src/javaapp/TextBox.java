@@ -58,6 +58,7 @@ public class TextBox extends Tool
                 canvas.toFront();
             }
         });
+        
         itemDeleteShape.setOnAction(new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent event) {
@@ -121,8 +122,8 @@ public class TextBox extends Tool
         
         
         Text textString = new Text(text);
-        Font textFont = new Font(font.getFamily(), fontSize);
-        textString.setFont(textFont);
+        font = new Font(font.getFamily(), fontSize);
+        textString.setFont(font);
         double fontWidth = textString.layoutBoundsProperty().get().getWidth();
         double fontHeight = textString.layoutBoundsProperty().get().getHeight();
         
@@ -146,9 +147,6 @@ public class TextBox extends Tool
             @Override
             public void handle(MouseEvent e)
             {
-                if(resizing)
-                    return;
-                
                 canvas.setLayoutX(e.getSceneX() - (canvas.getWidth() / 2));
                 canvas.setLayoutY(e.getSceneY() - (canvas.getHeight() / 2));
             }
@@ -222,9 +220,16 @@ public class TextBox extends Tool
     @Override
     public void SetFontSize(double fontSize)
     {
-        this.fontSize = fontSize;
-        font = new Font(font.getFamily(), this.fontSize);
-        Update();
+        try
+        {
+            this.fontSize = fontSize;
+            font = new Font(font.getFamily(), this.fontSize);
+            Update();
+        }catch(Exception e)
+        {
+            System.out.println("Font too large");
+        }
+        
     }
     
     @Override

@@ -220,16 +220,6 @@ public class Shape extends Tool
     }
     
     @Override
-    public void RemoveHandlers() 
-    {
-        //canvas.removeEventHandler(MouseEvent.MOUSE_DRAGGED, moveEvent);
-        //canvas.removeEventHandler(MouseEvent.MOUSE_ENTERED, enterEvent);
-        //canvas.addEventHandler(MouseEvent.MOUSE_MOVED, resizeEvent);
-        //canvas.removeEventHandler(MouseEvent.MOUSE_EXITED, exitEvent);
-        //canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
-    }
-
-    @Override
     public void SetFillColor(String hex) 
     {
         fillColor = Color.web(hex);

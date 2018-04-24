@@ -37,19 +37,10 @@ public class SelectionTool extends Tool
         this.y = y;
         
         //this.lineColor = Color.web("4488ff");
-        this.lineColor = Color.web("005dff");
-        this.fillColor = Color.web("619aff", 0.5);
-        
         
         
         graphicsContext = canvas.getGraphicsContext2D();
-        graphicsContext.setLineWidth(1);
-        graphicsContext.setFill(fillColor);
-        graphicsContext.setStroke(lineColor);
         
-        
-        //LoadControls();
-        //Update();
         AddHandlers();
         AddContextMenu();
     }
@@ -119,31 +110,6 @@ public class SelectionTool extends Tool
     
     private void AddHandlers()
     {
-        enterEvent = new EventHandler<MouseEvent>(){
-                    
-            @Override
-            public void handle(MouseEvent e)
-            {
-                graphicsContext.setLineWidth(1);
-                graphicsContext.setStroke(boxBorderColor);
-                graphicsContext.setLineDashes(new double[]{8});
-                graphicsContext.strokeRect(0, 0, width, height);
-                graphicsContext.setLineDashes(new double[]{0});
-            }
-        };
-        
-        exitEvent = new EventHandler<MouseEvent>(){
-                    
-            @Override
-            public void handle(MouseEvent e)
-            {
-                graphicsContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-                canvas.getScene().setCursor(Cursor.DEFAULT);
-                Update();
-            }
-        };
-        
-        
         moveEvent = new EventHandler<MouseEvent>(){
                     
             @Override
@@ -169,6 +135,11 @@ public class SelectionTool extends Tool
                 
                 if(placed == false)
                 {
+                    graphicsContext.setLineWidth(1);
+                    lineColor = Color.web("005dff");
+                    fillColor = Color.web("619aff", 0.5);
+                    graphicsContext.setFill(fillColor);
+                    graphicsContext.setStroke(lineColor);
                     canvas.setLayoutX(x);
                     canvas.setLayoutY(y);
                     canvas.setWidth(width);
@@ -192,61 +163,5 @@ public class SelectionTool extends Tool
     {
         parent.removeEventHandler(MouseEvent.MOUSE_CLICKED, this.clickEvent);
         parent.removeEventHandler(MouseEvent.MOUSE_MOVED, this.moveEvent);
-    }
-
-    @Override
-    public void SetFillColor(String hex) 
-    {
-        fillColor = Color.web(hex);
-        Update();
-    }
-    
-    @Override
-    public void SetOutlineColor(String hex) 
-    {
-        lineColor = Color.web(hex);
-        Update();
-    }
-    
-    @Override
-    public void SetHeight(double height)
-    {
-        this.height = height;
-        canvas.setHeight(height + padding);
-        Update();
-    }
-    
-    @Override
-    public void SetWidth(double width)
-    {
-        this.width = width;
-        canvas.setWidth(width + padding);
-        Update();
-    }
-    
-    @Override
-    public void NoFill()
-    {
-        if(!fillShape)
-            return;
-        
-        fillShape = false;
-        Update();
-    }
-    
-    @Override
-    public void Fill()
-    {
-        if(fillShape)
-            return;
-        
-        fillShape = true;
-        Update();
-    }
-    
-    public void Rotate(double angle)
-    {
-        this.rotation = angle;
-        canvas.setRotate(angle);
     }
 }

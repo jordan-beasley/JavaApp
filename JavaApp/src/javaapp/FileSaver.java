@@ -20,10 +20,12 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javax.imageio.ImageIO;
 
-public class Dropper extends Tool
+
+public class FileSaver extends Tool
 {
     double padding = 20; // padding to add around shape for hover outline
     AnchorPane controlPane;
@@ -37,7 +39,7 @@ public class Dropper extends Tool
     WritableImage writableImage;
     Stage stage;
     
-    public Dropper(Pane parent, AnchorPane controlPane, Stage stage)
+    public FileSaver(Pane parent, AnchorPane controlPane, Stage stage)
     {
         this.controlPane = controlPane;
         this.parent = parent;
@@ -57,8 +59,9 @@ public class Dropper extends Tool
         
         pr = writableImage.getPixelReader();
         
-        AddHandlers();
+        SaveFile();
     }
+    
     
     @Override
     public void Update()
@@ -67,47 +70,24 @@ public class Dropper extends Tool
         graphicsContext.fillRect(0,  0, width, height);
     }
     
-    private void AddHandlers()
+    private void SaveFile()
     {
-        moveEvent = new EventHandler<MouseEvent>(){
-            @Override
-            public void handle(MouseEvent event) 
-            {
-                try
-                {
-                    Color scene = pr.getColor((int)event.getSceneX(),  (int)event.getSceneY());
-                    String p = scene.toString().substring(2, 8);
-                    System.out.println("scene: " + p);
-                }catch(Exception e)
-                {
-                    System.out.println("Not in parent bounds");
-                }
-                
-               
-            }
-        };
-        
-        clickEvent = new EventHandler<MouseEvent>()
+        try
         {
-                    
-            @Override
-            public void handle(MouseEvent e)
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save Image");
+            fileChooser.getExtensionFilters().addAll(
+                new ExtensionFilter("Image Files", "*.png", "*.jpg", "*.gif"));
+            File file = fileChooser.showSaveDialog(stage);
+            RenderedImage renderedImage = SwingFXUtils.fromFXImage(writableImage, null);
+
+            if (file != null) 
             {
-                parent.getChildren().remove(canvas);
-                parent.removeEventHandler(MouseEvent.MOUSE_MOVED, moveEvent);
-                parent.removeEventHandler(MouseEvent.MOUSE_CLICKED, this);
-                
+                ImageIO.write(renderedImage, "png", file);
             }
-        };
-        
-        parent.addEventHandler(MouseEvent.MOUSE_CLICKED, clickEvent);
-        parent.addEventHandler(MouseEvent.MOUSE_MOVED, moveEvent);
-    }
-    
-    @Override
-    public void RemoveHandlers() 
-    {
-        parent.removeEventHandler(MouseEvent.MOUSE_MOVED, this.moveEvent);
-        parent.removeEventHandler(MouseEvent.MOUSE_CLICKED, this.clickEvent);
+        }catch(IOException ex)
+        {
+            System.out.println("Image not saved");
+        }
     }
 }
