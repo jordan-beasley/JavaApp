@@ -86,9 +86,9 @@ public class FXMLDocumentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) 
     {
-        //filter f = new filter();
-        //image = SwingFXUtils.toFXImage(f.getImage(), null);
-        //imgView.setImage(image);
+        filter f = new filter();
+        image = SwingFXUtils.toFXImage(f.getImage(), null);
+        imgView.setImage(image);
         //GraphicsContext gc = drawCanvas.getGraphicsContext2D();
         // add a black box around the border of the main canvas
         /*GraphicsContext gc = drawCanvas.getGraphicsContext2D();
@@ -172,7 +172,7 @@ public class FXMLDocumentController implements Initializable {
                         String shape = "square"; //(rand <= 0.33) ? "square" : (rand <= 0.66) ? "circle" : "triangle";
                         Stage stage = (Stage)anchorPane.getScene().getWindow();
                         Tool newTool = new FilteredImage(event.getX(), event.getY(), stage, controlPane); //new Shape(event.getX(), event.getY(), shape, controlPane);
-                        String shape = "square";
+                        //String shape = "square";
                         //Tool newTool = new Shape(event.getX(), event.getY(), shape, controlPane);
                         //currentTool = newTool;
                         anchorPane.getChildren().add(currentTool.GetCanvas());

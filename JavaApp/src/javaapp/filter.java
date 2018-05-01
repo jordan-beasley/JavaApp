@@ -16,13 +16,13 @@ public class filter {
     int width;
     int height;
     double offsetRed = 100;
-    double offsetGreen = 100; //offsets must be 0-100 values
-    double offsetBlue = 100;
+    double offsetGreen = 70; //offsets must be 0-100 values
+    double offsetBlue = 10;
     
     public filter()
     {
         try{
-            img = ImageIO.read(new File("C:\\Users\\caleb\\Pictures\\test.jpg"));
+            img = ImageIO.read(new File("C:\\Users\\caleb\\Pictures\\JavaApp\\test.jpg"));
             width = img.getWidth();
             height = img.getHeight();
             
