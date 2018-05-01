@@ -312,8 +312,11 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void UsePen(ActionEvent event) 
     {
-        ClearTool();
-        currentTool = new Pen(drawCanvas, controlPane);
+        //ClearTool();
+        //currentTool = new Pen(drawCanvas, controlPane);
+        Stage stage = (Stage)anchorPane.getScene().getWindow();
+        Tool newTool = new FilteredImage(anchorPane, stage, controlPane);
+        currentTool = newTool;
     }
 
     @FXML
