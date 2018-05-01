@@ -21,11 +21,11 @@ public class JavaApp extends Application {
         
         Scene scene = new Scene(root);
         
-        //BufferedImage bufferedImg = ImageIO.read(new File("C:\\Users\\caleb\\Pictures\\JavaApp.png"));;
-        //Image i = SwingFXUtils.toFXImage(bufferedImg, null);
+        BufferedImage bufferedImg = ImageIO.read(new File("C:\\Users\\caleb\\Pictures\\JavaApp.png"));;
+        Image i = SwingFXUtils.toFXImage(bufferedImg, null);
 
         stage.setTitle("OpenEdit");
-        //stage.getIcons().add(i);
+        stage.getIcons().add(i);
         stage.setScene(scene);
         stage.show();
     }

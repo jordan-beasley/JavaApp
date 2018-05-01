@@ -45,6 +45,7 @@ public class PenToolUIController implements Initializable
         colors.put("Red", "ff0000");
         colors.put("Green", "03ff00");
         colors.put("Blue", "0021ff");
+        colors.put("White", "ffffff");
         
         List<String> list = new ArrayList<String>(colors.keySet());
         ObservableList options = FXCollections.observableArrayList(list);
